@@ -16,9 +16,20 @@ MRDSDB::MRDSDB() {
 int MRDSDB::connect(const Database::SQL::DatabaseHost host) {
     LogTool::_log("connect", "MRDS MRDSDB", boost::log::trivial::trace);
 
-    this->connector_.reset();
-    this->connector_ = std::make_shared<Database::SQL::QtConnector>();
+//    this->connector_.reset();
+    if (!this->connector_)
+        this->connector_ = std::make_shared<Database::SQL::QtConnector>();
     return this->connector_->connect(host);
+}
+
+void MRDSDB::swap_connector(MRDSDB *ptr_mrdsdb) {
+    LogTool::_log("swap", "MRDS MRDSDB", boost::log::trivial::trace);
+    if (this->connector_)
+        LogTool::_log("old connection name:" + this->connector_->get_connection_name(), "MRDS MRDSDB",
+                      boost::log::trivial::trace);
+    this->connector_.swap(ptr_mrdsdb->connector_);
+    LogTool::_log("new connection name:" + this->connector_->get_connection_name(), "MRDS MRDSDB",
+                  boost::log::trivial::trace);
 }
 
 std::string MRDSDB::get_datetime(const DT_SOURCE src) {
@@ -31,3 +42,5 @@ std::string MRDSDB::get_datetime(const DT_SOURCE src) {
             return query->value(0).toString().toStdString();
     }
 }
+
+

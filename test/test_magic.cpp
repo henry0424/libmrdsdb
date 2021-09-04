@@ -17,15 +17,11 @@ int main(int argc, char **argv) {
     sql_host.passwd = "itriacs";
     sql_host.database = "mrdsdb";
 
-    auto mrdsdb = std::make_shared<MRDS::ClassReference>();
+    auto mrdsdb = std::make_shared<MRDS::Magic>();
     mrdsdb->connect(sql_host);
 
-    auto str = mrdsdb->null_(std::string(""));
-    auto dt_SYSTEM = mrdsdb->get_datetime(MRDS::DT_SOURCE::SYSTEM);
-    auto dt_DATABASE = mrdsdb->get_datetime(MRDS::DT_SOURCE::DATABASE);
-    { auto list = mrdsdb->get_carrier_class_list(); }
-    { auto list = mrdsdb->get_equipment_class_list(); }
-    { auto list = mrdsdb->get_event_class_list(); }
+    auto magic_map = mrdsdb->get_magic_map();
+    auto value = mrdsdb->get_magic_value("VERSION_MRDS");
 
     sleep(1);
 }

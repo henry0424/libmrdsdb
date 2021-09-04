@@ -127,3 +127,7 @@ QueryInfo Database::SQL::QtConnector::exec(const std::string &query) {
 Database::SQL::DatabaseHost Database::SQL::QtConnector::get_database_host() {
     return *this->databasehost_;
 }
+
+std::string Database::SQL::QtConnector::get_connection_name() {
+    return this->qt_db_->connectionName().toStdString();
+}

@@ -7,5 +7,6 @@
 
 #include "mrdsdb_base.h"
 #include "class_reference.h"
+#include "magic.h"
 
 #endif //LIBMRDSDB_MRDSDB_H

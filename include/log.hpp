@@ -20,6 +20,7 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 
+
 namespace Database::Log
 {
     using namespace boost::log::trivial;
@@ -37,6 +38,9 @@ namespace Database::Log
     public:
         static void _log_init(const int output = (int)LogOutput::NOUSE, const std::string logDir = "log", const std::string fileName = "")
         {
+            static bool already_init = false;
+            if (already_init)
+                return;
             boost::log::register_simple_formatter_factory<boost::log::trivial::severity_level, char>("Severity");
             //std::string logFormat = "[%TimeStamp%] (%LineID%) [%ProcessID%] [%Severity%]:%Message%";
             std::string log_format = "[%TimeStamp%] (%LineID%) [%ProcessID%] [%Severity%]:%Message%";
@@ -57,6 +61,7 @@ namespace Database::Log
             }
 
             boost::log::add_common_attributes();
+            already_init = true;
         }
 
         static void _set_filter_level(boost::log::trivial::severity_level level)

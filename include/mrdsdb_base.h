@@ -27,6 +27,8 @@ namespace Database::SQL::MRDS {
 
         int connect(const DatabaseHost host);
 
+        void swap_connector(MRDSDB *ptr_mrdsdb);
+
         std::string null_(const std::string &src) {
             return (src.empty()) ? "NULL" : std::string("'" + src + "'");
         }

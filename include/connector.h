@@ -76,6 +76,8 @@ namespace Database::SQL {
         QueryInfo exec(const std::string &query);
 
         DatabaseHost get_database_host();
+
+        std::string get_connection_name();
     };
 
 }
