@@ -14,7 +14,7 @@ std::map<std::string, std::string> Magic::get_magic_map() {
             this->connector_->get_database_host().database %
             this->SCHEMA %
             "magic");
-    LogTool::_log("query cmd: " + queryCmd, "MRDS ClassReference", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -25,7 +25,7 @@ std::map<std::string, std::string> Magic::get_magic_map() {
         auto key = query->value(loc++).toString().toStdString();
         auto value = query->value(loc++).toString().toStdString();
         magic_map_[key] = value;
-        LogTool::_log("key: " + key + " value: " + magic_map_[key], "MRDS ClassReference", boost::log::trivial::trace);
+        LogTool::_log("key: " + key + " value: " + magic_map_[key], "MRDS Magic", boost::log::trivial::trace);
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -44,7 +44,7 @@ std::string Magic::get_magic_value(const std::string &key) {
             this->SCHEMA %
             "magic" %
             null_(key));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS ClassReference", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -53,7 +53,7 @@ std::string Magic::get_magic_value(const std::string &key) {
     while (query->next()) {
         auto loc{0};
         value = query->value(loc++).toString().toStdString();
-        LogTool::_log("key: " + key + " value: " + value, "MRDS ClassReference", boost::log::trivial::trace);
+        LogTool::_log("key: " + key + " value: " + value, "MRDS Magic", boost::log::trivial::trace);
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))

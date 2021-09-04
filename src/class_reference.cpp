@@ -6,7 +6,7 @@
 
 using namespace Database::SQL::MRDS;
 
-std::vector<ClassReference::CarrierClass> ClassReference::get_carrier_class_list() {
+std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
     LogTool::_log("get_carrier_class_list", "MRDS ClassReference", boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT carrier_class "
@@ -18,11 +18,11 @@ std::vector<ClassReference::CarrierClass> ClassReference::get_carrier_class_list
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
-    std::vector<ClassReference::CarrierClass> list_;
+    std::vector<DB_SCHEMA::carrier_class> list_;
     list_.clear();
     while (query->next()) {
         auto loc{0};
-        CarrierClass carrier_class_;
+        DB_SCHEMA::carrier_class carrier_class_;
         carrier_class_.carrier_class = query->value(loc++).toString().toStdString();
         list_.push_back(carrier_class_);
         LogTool::_log("carrier_class: " + carrier_class_.carrier_class, "MRDS ClassReference", boost::log::trivial::trace);
@@ -34,7 +34,7 @@ std::vector<ClassReference::CarrierClass> ClassReference::get_carrier_class_list
     return list_;
 }
 
-std::vector<ClassReference::EquipmentClass> ClassReference::get_equipment_class_list() {
+std::vector<DB_SCHEMA::equipment_class> ClassReference::get_equipment_class_list() {
     LogTool::_log("get_equipment_class_list", "MRDS ClassReference", boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT equipment_class "
@@ -46,11 +46,11 @@ std::vector<ClassReference::EquipmentClass> ClassReference::get_equipment_class_
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
-    std::vector<ClassReference::EquipmentClass> list_;
+    std::vector<DB_SCHEMA::equipment_class> list_;
     list_.clear();
     while (query->next()) {
         auto loc{0};
-        EquipmentClass equipment_class_;
+        DB_SCHEMA::equipment_class equipment_class_;
         equipment_class_.equipment_class = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_class_);
         LogTool::_log("equipment_class: " + equipment_class_.equipment_class, "MRDS ClassReference", boost::log::trivial::trace);
@@ -62,7 +62,7 @@ std::vector<ClassReference::EquipmentClass> ClassReference::get_equipment_class_
     return list_;
 }
 
-std::vector<ClassReference::EventClass> ClassReference::get_event_class_list() {
+std::vector<DB_SCHEMA::event_class> ClassReference::get_event_class_list() {
     LogTool::_log("get_event_class_list", "MRDS ClassReference", boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT event_class "
@@ -74,11 +74,11 @@ std::vector<ClassReference::EventClass> ClassReference::get_event_class_list() {
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
-    std::vector<ClassReference::EventClass> list_;
+    std::vector<DB_SCHEMA::event_class> list_;
     list_.clear();
     while (query->next()) {
         auto loc{0};
-        EventClass event_class_;
+        DB_SCHEMA::event_class event_class_;
         event_class_.event_class = query->value(loc++).toString().toStdString();
         list_.push_back(event_class_);
         LogTool::_log("event_class: " + event_class_.event_class, "MRDS ClassReference", boost::log::trivial::trace);

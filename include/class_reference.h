@@ -11,30 +11,32 @@
 
 namespace Database::SQL::MRDS {
 
+    namespace DB_SCHEMA {
+        struct carrier_class {
+            std::string carrier_class;
+        };
+
+        struct equipment_class {
+            std::string equipment_class;
+        };
+
+        struct event_class {
+            std::string event_class;
+        };
+    }
+
     class ClassReference : public MRDSDB {
 
-    private:
+    protected:
         const std::string SCHEMA{"class_reference"};
 
     public:
 
-        struct CarrierClass {
-            std::string carrier_class;
-        };
+        std::vector<DB_SCHEMA::carrier_class> get_carrier_class_list();
 
-        struct EquipmentClass {
-            std::string equipment_class;
-        };
+        std::vector<DB_SCHEMA::equipment_class> get_equipment_class_list();
 
-        struct EventClass {
-            std::string event_class;
-        };
-
-        std::vector<CarrierClass> get_carrier_class_list();
-
-        std::vector<EquipmentClass> get_equipment_class_list();
-
-        std::vector<EventClass> get_event_class_list();
+        std::vector<DB_SCHEMA::event_class> get_event_class_list();
 
     };
 

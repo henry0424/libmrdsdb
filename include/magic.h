@@ -14,7 +14,7 @@ namespace Database::SQL::MRDS {
 
     class Magic : public MRDSDB {
 
-    private:
+    protected:
         const std::string SCHEMA{"messy"};
 
     public:
