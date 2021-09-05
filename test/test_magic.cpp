@@ -23,5 +23,11 @@ int main(int argc, char **argv) {
     auto magic_map = mrdsdb->get_magic_map();
     auto value = mrdsdb->get_magic_value("VERSION_MRDS");
 
+    std::map<std::string, std::string> magic;
+    magic["Hello"] = "tryy";
+    magic["VERSION_MRDSDB"] = "1.1";
+
+    mrdsdb->set_magic_map(magic);
+
     sleep(1);
 }
