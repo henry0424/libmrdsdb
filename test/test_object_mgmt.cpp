@@ -31,6 +31,29 @@ int main(int argc, char **argv) {
         auto vehicle_mgmt_list = mrdsdb->get_vehicle_mgmt_list();
         auto vehicle_mgmt = mrdsdb->get_vehicle_mgmt(vehicle_mgmt_list.at(0).vehicle_id);
     }
+    {
+        auto mrdsdb = std::make_shared<MRDS::VehicleSlotMgmt>();
+        mrdsdb->connect(sql_host);
+
+        auto vehicle_slot_mgmt_list = mrdsdb->get_vehicle_slot_mgmt_list();
+        auto vehicle_slot_mgmt_list_2 = mrdsdb->get_vehicle_slot_mgmt_list(vehicle_slot_mgmt_list.at(0).vehicle_id);
+        auto vehicle_slot_mgmt = mrdsdb->get_vehicle_slot_mgmt(vehicle_slot_mgmt_list.at(0).vehicle_slot_id);
+    }
+    {
+        auto mrdsdb = std::make_shared<MRDS::EquipmentMgmt>();
+        mrdsdb->connect(sql_host);
+
+        auto equipment_mgmt_list = mrdsdb->get_equipment_mgmt_list();
+        auto equipment_mgmt = mrdsdb->get_equipment_mgmt(equipment_mgmt_list.at(0).equipment_id);
+    }
+    {
+        auto mrdsdb = std::make_shared<MRDS::EquipmentPortMgmt>();
+        mrdsdb->connect(sql_host);
+
+        auto equipment_port_mgmt_list = mrdsdb->get_equipment_port_mgmt_list();
+        auto equipment_port_mgmt_list_2 = mrdsdb->get_equipment_port_mgmt_list(equipment_port_mgmt_list.at(0).equipment_id);
+        auto equipment_port_mgmt = mrdsdb->get_equipment_port_mgmt(equipment_port_mgmt_list_2.at(0).equipment_port_id);
+    }
 
     sleep(1);
 }

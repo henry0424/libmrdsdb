@@ -32,6 +32,20 @@ namespace Database::SQL::MRDS {
             int battery_threshold_low;
         };
 
+        struct vehicle_slot_mgmt {
+            std::string vehicle_id;
+            std::string vehicle_slot_id;
+        };
+
+        struct equipment_mgmt {
+            std::string equipment_id;
+        };
+
+        struct equipment_port_mgmt {
+            std::string equipment_id;
+            std::string equipment_port_id;
+        };
+
     }
 
     class ObjectMgmt : public MRDSDB {
@@ -51,6 +65,31 @@ namespace Database::SQL::MRDS {
         std::vector<DB_SCHEMA::vehicle_mgmt> get_vehicle_mgmt_list();
 
         DB_SCHEMA::vehicle_mgmt get_vehicle_mgmt(const std::string &obj_id);
+    };
+
+    class VehicleSlotMgmt : public VehicleMgmt {
+    public:
+        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list();
+
+        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list(const std::string &obj_id);
+
+        DB_SCHEMA::vehicle_slot_mgmt get_vehicle_slot_mgmt(const std::string &vehicle_slot_id);
+    };
+
+    class EquipmentMgmt : public ObjectMgmt {
+    public:
+        std::vector<DB_SCHEMA::equipment_mgmt> get_equipment_mgmt_list();
+
+        DB_SCHEMA::equipment_mgmt get_equipment_mgmt(const std::string &obj_id);
+    };
+
+    class EquipmentPortMgmt : public EquipmentMgmt {
+    public:
+        std::vector<DB_SCHEMA::equipment_port_mgmt> get_equipment_port_mgmt_list();
+
+        std::vector<DB_SCHEMA::equipment_port_mgmt> get_equipment_port_mgmt_list(const std::string &obj_id);
+
+        DB_SCHEMA::equipment_port_mgmt get_equipment_port_mgmt(const std::string &equipment_port_id);
     };
 
 }
