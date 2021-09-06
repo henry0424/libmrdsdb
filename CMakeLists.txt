@@ -32,6 +32,7 @@ target_link_libraries(libmrdsdb
         ${Boost_LIBRARIES}
         ${Qt5Sql_LIBRARIES}
         crypto
+        boost_log_setup
         )
 
 add_executable(test_connector test/test_connector.cpp)
