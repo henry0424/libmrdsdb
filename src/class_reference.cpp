@@ -13,7 +13,7 @@ std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
                           "FROM %1%.%2%.%3%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "carrier_class");
+            this->TABLE_CARRIER_CLASS);
     LogTool::_log("query cmd: " + queryCmd, "MRDS ClassReference", boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -44,7 +44,7 @@ std::vector<DB_SCHEMA::equipment_class> ClassReference::get_equipment_class_list
                           "FROM %1%.%2%.%3%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "equipment_class");
+            this->TABLE_EQUIPMENT_CLASS);
     LogTool::_log("query cmd: " + queryCmd, "MRDS ClassReference", boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -75,7 +75,7 @@ std::vector<DB_SCHEMA::event_class> ClassReference::get_event_class_list() {
                           "FROM %1%.%2%.%3%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "event_class");
+            this->TABLE_EVENT_CLASS);
     LogTool::_log("query cmd: " + queryCmd, "MRDS ClassReference", boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

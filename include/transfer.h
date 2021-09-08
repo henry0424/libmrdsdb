@@ -49,10 +49,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_TRANSFER_PROCESSING{"transfer_processing"};
         const std::string TABLE_TRANSFER_TIMESTAMP{"transfer_timestamp"};
 
+        /* cmcid -> Command And Merged Command.*/
     public:
-
-        //cmcid -> Command And Merged Command.
-
         std::vector<DB_SCHEMA::transfer_processing>
         get_transfer_list(const std::string &cmcid = std::string());
 
@@ -83,6 +81,5 @@ namespace Database::SQL::MRDS {
     };
 
 }
-
 
 #endif //LIBMRDSDB_TRANSFER_H

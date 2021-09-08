@@ -31,5 +31,4 @@ namespace Database::SQL::MRDS {
 
 }
 
-
 #endif //LIBMRDSDB_MAGIC_H

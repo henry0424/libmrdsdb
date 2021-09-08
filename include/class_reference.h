@@ -30,9 +30,11 @@ namespace Database::SQL::MRDS {
 
     protected:
         const std::string SCHEMA{"class_reference"};
+        const std::string TABLE_CARRIER_CLASS{"carrier_class"};
+        const std::string TABLE_EQUIPMENT_CLASS{"equipment_class"};
+        const std::string TABLE_EVENT_CLASS{"event_class"};
 
     public:
-
         std::vector<DB_SCHEMA::carrier_class> get_carrier_class_list();
 
         std::vector<DB_SCHEMA::equipment_class> get_equipment_class_list();

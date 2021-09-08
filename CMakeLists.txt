@@ -25,9 +25,11 @@ add_library(mrdsdb SHARED
         src/connector.cpp
         src/mrdsdb_base.cpp
         src/class_reference.cpp
-        src/magic.cpp
         src/object_mgmt.cpp
-        src/transfer.cpp)
+        src/transfer.cpp
+        src/event_log.cpp
+        src/magic.cpp
+        )
 
 target_link_libraries(mrdsdb
         ${Boost_LIBRARIES}
@@ -63,5 +65,10 @@ target_link_libraries(test_object_mgmt
 
 add_executable(test_transfer test/test_transfer.cpp)
 target_link_libraries(test_transfer
+        mrdsdb
+        )
+
+add_executable(test_event_log test/test_event_log.cpp)
+target_link_libraries(test_event_log
         mrdsdb
         )

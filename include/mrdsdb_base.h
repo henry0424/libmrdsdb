@@ -42,5 +42,4 @@ namespace Database::SQL::MRDS {
 
 }
 
-
 #endif //LIBMRDSDB_MRDSDB_BASE_H

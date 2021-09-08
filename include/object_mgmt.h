@@ -52,6 +52,8 @@ namespace Database::SQL::MRDS {
 
     protected:
         const std::string SCHEMA{"configure"};
+        const std::string TABLE_OBJECT_MGMT{"object_mgmt"};
+        const std::string TABLE_OBJECT_PORT_MGMT{"object_port_mgmt"};
 
     public:
         std::vector<DB_SCHEMA::object_mgmt> get_object_mgmt_list();
@@ -61,6 +63,9 @@ namespace Database::SQL::MRDS {
     };
 
     class VehicleMgmt : public ObjectMgmt {
+    protected:
+        const std::string TABLE_VEHICLE_MGMT{"vehicle_mgmt"};
+
     public:
         std::vector<DB_SCHEMA::vehicle_mgmt> get_vehicle_mgmt_list();
 
@@ -69,14 +74,15 @@ namespace Database::SQL::MRDS {
 
     class VehicleSlotMgmt : public VehicleMgmt {
     public:
-        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list();
-
-        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list(const std::string &obj_id);
+        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list(const std::string &obj_id = std::string());
 
         DB_SCHEMA::vehicle_slot_mgmt get_vehicle_slot_mgmt(const std::string &vehicle_slot_id);
     };
 
     class EquipmentMgmt : public ObjectMgmt {
+    protected:
+        const std::string TABLE_EQUIPMENT_MGMT{"equipment_mgmt"};
+
     public:
         std::vector<DB_SCHEMA::equipment_mgmt> get_equipment_mgmt_list();
 
@@ -85,9 +91,7 @@ namespace Database::SQL::MRDS {
 
     class EquipmentPortMgmt : public EquipmentMgmt {
     public:
-        std::vector<DB_SCHEMA::equipment_port_mgmt> get_equipment_port_mgmt_list();
-
-        std::vector<DB_SCHEMA::equipment_port_mgmt> get_equipment_port_mgmt_list(const std::string &obj_id);
+        std::vector<DB_SCHEMA::equipment_port_mgmt> get_equipment_port_mgmt_list(const std::string &obj_id = std::string());
 
         DB_SCHEMA::equipment_port_mgmt get_equipment_port_mgmt(const std::string &equipment_port_id);
     };
