@@ -21,14 +21,15 @@ link_directories(
         ${Qt5Sql_LIBRARIES}
 )
 
-add_library(libmrdsdb SHARED
+add_library(mrdsdb SHARED
         src/connector.cpp
         src/mrdsdb_base.cpp
         src/class_reference.cpp
         src/magic.cpp
-        src/object_mgmt.cpp)
+        src/object_mgmt.cpp
+        src/transfer.cpp)
 
-target_link_libraries(libmrdsdb
+target_link_libraries(mrdsdb
         ${Boost_LIBRARIES}
         ${Qt5Sql_LIBRARIES}
         crypto
@@ -37,25 +38,30 @@ target_link_libraries(libmrdsdb
 
 add_executable(test_connector test/test_connector.cpp)
 target_link_libraries(test_connector
-        libmrdsdb
+        mrdsdb
         )
 
 add_executable(test_mrdsdb_base test/test_mrdsdb_base.cpp)
 target_link_libraries(test_mrdsdb_base
-        libmrdsdb
+        mrdsdb
         )
 
 add_executable(test_class_reference test/test_class_reference.cpp)
 target_link_libraries(test_class_reference
-        libmrdsdb
+        mrdsdb
         )
 
 add_executable(test_magic test/test_magic.cpp)
 target_link_libraries(test_magic
-        libmrdsdb
+        mrdsdb
         )
 
 add_executable(test_object_mgmt test/test_object_mgmt.cpp)
 target_link_libraries(test_object_mgmt
-        libmrdsdb
+        mrdsdb
+        )
+
+add_executable(test_transfer test/test_transfer.cpp)
+target_link_libraries(test_transfer
+        mrdsdb
         )

@@ -23,6 +23,8 @@
 #include "log.hpp"
 #include "exception.hpp"
 
+#define LOGOUT_EXEC false
+
 typedef std::shared_ptr<QSqlQuery> QueryInfo;
 
 using namespace Database::Log;

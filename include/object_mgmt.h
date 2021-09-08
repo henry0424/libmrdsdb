@@ -8,6 +8,7 @@
 #include "mrdsdb_base.h"
 
 #define NO_DATA_EXCEPTION true
+#define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
 
@@ -45,7 +46,6 @@ namespace Database::SQL::MRDS {
             std::string equipment_id;
             std::string equipment_port_id;
         };
-
     }
 
     class ObjectMgmt : public MRDSDB {

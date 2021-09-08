@@ -33,6 +33,10 @@ namespace Database::SQL::MRDS {
             return (src.empty()) ? "NULL" : std::string("'" + src + "'");
         }
 
+        std::string default_(const std::string &src) {
+            return (src.empty()) ? "DEFAULT" : std::string("'" + src + "'");
+        }
+
         std::string get_datetime(const DT_SOURCE src);
     };
 

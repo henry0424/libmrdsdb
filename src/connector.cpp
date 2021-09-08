@@ -118,7 +118,8 @@ QueryInfo Database::SQL::QtConnector::exec(const std::string &query) {
     auto sql_query_ = std::make_shared<QSqlQuery>(*qt_db_);
     LogTool::_log("exec: " + query, "Qt Connector", boost::log::trivial::trace);
     if (!sql_query_->exec(query.c_str())) {
-        LogTool::_log("exec: " + query + " exception", "Qt Connector", boost::log::trivial::error);
+        if (LOGOUT_EXEC)
+            LogTool::_log("exec: " + query + " exception", "Qt Connector", boost::log::trivial::error);
         throw Database::Exception::QueryException();
     }
     return sql_query_;

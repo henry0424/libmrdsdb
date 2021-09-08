@@ -32,16 +32,18 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
         object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
         object_mgmt_.vendor = query->value(loc++).toString().toStdString();
         list_.push_back(object_mgmt_);
-        LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -73,16 +75,18 @@ DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
         object_mgmt_.region = query->value(loc++).toString().toStdString();
         object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
         object_mgmt_.vendor = query->value(loc++).toString().toStdString();
-        LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
-        LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+        }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
@@ -117,20 +121,22 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
         vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
         vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
         list_.push_back(vehicle_mgmt_);
-        LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
-        LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
+            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -161,20 +167,22 @@ DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id)
         vehicle_mgmt_.battery_threshold_full = query->value(loc++).toInt();
         vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
         vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
-        LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
-        LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
-                      "MRDS VehicleMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
+            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
+                          "MRDS VehicleMgmt",
+                          boost::log::trivial::trace);
+        }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
@@ -202,10 +210,12 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
         vehicle_slot_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
         vehicle_slot_mgmt_.vehicle_slot_id = query->value(loc++).toString().toStdString();
         list_.push_back(vehicle_slot_mgmt_);
-        LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -237,10 +247,12 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
         vehicle_slot_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
         vehicle_slot_mgmt_.vehicle_slot_id = query->value(loc++).toString().toStdString();
         list_.push_back(vehicle_slot_mgmt_);
-        LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -272,10 +284,12 @@ DB_SCHEMA::vehicle_slot_mgmt VehicleSlotMgmt::get_vehicle_slot_mgmt(const std::s
         vehicle_slot_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
         vehicle_slot_mgmt_.vehicle_slot_id = query->value(loc++).toString().toStdString();
         list_.push_back(vehicle_slot_mgmt_);
-        LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -308,8 +322,10 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() 
         equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
 
         list_.push_back(equipment_mgmt_);
-        LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, "MRDS EquipmentMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, "MRDS EquipmentMgmt",
+                          boost::log::trivial::trace);
+        }
 
         querySize++;
     }
@@ -336,7 +352,9 @@ DB_SCHEMA::equipment_mgmt EquipmentMgmt::get_equipment_mgmt(const std::string &o
     if (query->next()) {
         auto loc{0};
         equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
-        LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentMgmt", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentMgmt", boost::log::trivial::trace);
+        }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
@@ -364,10 +382,12 @@ std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_por
         equipment_port_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
         equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_port_mgmt_);
-        LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -399,10 +419,12 @@ std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_por
         equipment_port_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
         equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_port_mgmt_);
-        LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -434,10 +456,12 @@ DB_SCHEMA::equipment_port_mgmt EquipmentPortMgmt::get_equipment_port_mgmt(const 
         equipment_port_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
         equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_port_mgmt_);
-        LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
-        LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
-                      boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))

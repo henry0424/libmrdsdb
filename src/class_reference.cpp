@@ -25,7 +25,10 @@ std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
         DB_SCHEMA::carrier_class carrier_class_;
         carrier_class_.carrier_class = query->value(loc++).toString().toStdString();
         list_.push_back(carrier_class_);
-        LogTool::_log("carrier_class: " + carrier_class_.carrier_class, "MRDS ClassReference", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("carrier_class: " + carrier_class_.carrier_class, "MRDS ClassReference",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -53,7 +56,10 @@ std::vector<DB_SCHEMA::equipment_class> ClassReference::get_equipment_class_list
         DB_SCHEMA::equipment_class equipment_class_;
         equipment_class_.equipment_class = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_class_);
-        LogTool::_log("equipment_class: " + equipment_class_.equipment_class, "MRDS ClassReference", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("equipment_class: " + equipment_class_.equipment_class, "MRDS ClassReference",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -81,7 +87,10 @@ std::vector<DB_SCHEMA::event_class> ClassReference::get_event_class_list() {
         DB_SCHEMA::event_class event_class_;
         event_class_.event_class = query->value(loc++).toString().toStdString();
         list_.push_back(event_class_);
-        LogTool::_log("event_class: " + event_class_.event_class, "MRDS ClassReference", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("event_class: " + event_class_.event_class, "MRDS ClassReference",
+                          boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))

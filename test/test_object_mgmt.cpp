@@ -8,7 +8,7 @@
 using namespace Database::SQL;
 
 int main(int argc, char **argv) {
-    std::cout << "test_class_reference" << std::endl;
+    std::cout << "test_object_mgmt" << std::endl;
 
     DatabaseHost sql_host;
     sql_host.host = "tachyon.itriroboticslab.org";

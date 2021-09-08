@@ -8,6 +8,7 @@
 #include "mrdsdb_base.h"
 
 #define NO_DATA_EXCEPTION true
+#define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
 

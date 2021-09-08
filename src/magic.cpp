@@ -25,7 +25,9 @@ std::map<std::string, std::string> Magic::get_magic_map() {
         auto key = query->value(loc++).toString().toStdString();
         auto value = query->value(loc++).toString().toStdString();
         magic_map_[key] = value;
-        LogTool::_log("key: " + key + " value: " + magic_map_[key], "MRDS Magic", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("key: " + key + " value: " + magic_map_[key], "MRDS Magic", boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -53,7 +55,9 @@ std::string Magic::get_magic_value(const std::string &key) {
     while (query->next()) {
         auto loc{0};
         value = query->value(loc++).toString().toStdString();
-        LogTool::_log("key: " + key + " value: " + value, "MRDS Magic", boost::log::trivial::trace);
+        if (LOGOUT_QUERY_RESULT) {
+            LogTool::_log("key: " + key + " value: " + value, "MRDS Magic", boost::log::trivial::trace);
+        }
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
