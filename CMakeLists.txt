@@ -27,6 +27,8 @@ add_library(mrdsdb SHARED
         src/class_reference.cpp
         src/object_mgmt.cpp
         src/transfer.cpp
+        src/vehicle_status.cpp
+        src/parking.cpp
         src/event_log.cpp
         src/magic.cpp
         )
@@ -70,5 +72,10 @@ target_link_libraries(test_transfer
 
 add_executable(test_event_log test/test_event_log.cpp)
 target_link_libraries(test_event_log
+        mrdsdb
+        )
+
+add_executable(test_parking test/test_parking.cpp)
+target_link_libraries(test_parking
         mrdsdb
         )

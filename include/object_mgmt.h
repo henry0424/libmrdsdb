@@ -6,47 +6,12 @@
 #define LIBMRDSDB_OBJECT_MGMT_H
 
 #include "mrdsdb_base.h"
+#include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
-
-    namespace DB_SCHEMA {
-        struct object_mgmt {
-            std::string obj_uid;
-            std::string obj_id;
-            bool enable;
-            std::string create_ts;
-            std::string update_ts;
-            std::string region;
-            std::string equipment_class;
-            std::string vendor;
-        };
-
-        struct vehicle_mgmt {
-            std::string vehicle_id;
-            std::string carrier_class;
-            int slot_num;
-            int battery_threshold_full;
-            int battery_threshold_high;
-            int battery_threshold_low;
-        };
-
-        struct vehicle_slot_mgmt {
-            std::string vehicle_id;
-            std::string vehicle_slot_id;
-        };
-
-        struct equipment_mgmt {
-            std::string equipment_id;
-        };
-
-        struct equipment_port_mgmt {
-            std::string equipment_id;
-            std::string equipment_port_id;
-        };
-    }
 
     class ObjectMgmt : public MRDSDB {
 

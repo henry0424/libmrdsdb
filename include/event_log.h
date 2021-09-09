@@ -6,23 +6,24 @@
 #define LIBMRDSDB_EVENT_LOG_H
 
 #include "mrdsdb_base.h"
+#include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
 
-    namespace DB_SCHEMA {
-        struct event_log_vehicle {
-            std::string msg_uuid;
-            std::string event_class;
-            std::string vehicle_id;
-            std::string vehicle_status;
-            std::string vehicle_location;
-            std::string carrier_id;
-            std::string comment;
-        };
-    }
+//    namespace DB_SCHEMA {
+//        struct event_log_vehicle {
+//            std::string msg_uuid;
+//            std::string event_class;
+//            std::string vehicle_id;
+//            std::string vehicle_status;
+//            std::string vehicle_location;
+//            std::string carrier_id;
+//            std::string comment;
+//        };
+//    }
 
     class EventLog : public MRDSDB {
 

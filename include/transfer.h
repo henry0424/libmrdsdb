@@ -6,32 +6,12 @@
 #define LIBMRDSDB_TRANSFER_H
 
 #include "mrdsdb_base.h"
+#include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
-
-    namespace DB_SCHEMA {
-        struct transfer_base {
-            std::string receive_ts;
-            std::string command_id;
-            std::string source_port;
-            std::string dest_port;
-            int priority = 0;
-            std::string operator_id = "MRDS_SYSTEM";
-            std::string carrier_id;
-        };
-
-        struct transfer_processing {
-            DB_SCHEMA::transfer_base base;
-            std::string merged_command_id;
-            std::string vehicle_id;
-            std::string transfer_state;
-            std::string comment;
-            std::string magic;
-        };
-    }
 
     class Transfer : public MRDSDB {
     public:

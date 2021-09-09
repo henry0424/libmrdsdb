@@ -6,25 +6,12 @@
 #define LIBMRDSDB_CLASS_REFERENCE_H
 
 #include "mrdsdb_base.h"
+#include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
-
-    namespace DB_SCHEMA {
-        struct carrier_class {
-            std::string carrier_class;
-        };
-
-        struct equipment_class {
-            std::string equipment_class;
-        };
-
-        struct event_class {
-            std::string event_class;
-        };
-    }
 
     class ClassReference : public MRDSDB {
 

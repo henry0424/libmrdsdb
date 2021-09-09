@@ -9,6 +9,7 @@
 #include "class_reference.h"
 #include "object_mgmt.h"
 #include "transfer.h"
+#include "parking.h"
 #include "event_log.h"
 #include "magic.h"
 
