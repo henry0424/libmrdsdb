@@ -14,6 +14,8 @@
 namespace Database::SQL::MRDS {
 
     class ClassReference : public MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDS ClassReference"};
 
     protected:
         const std::string SCHEMA{"class_reference"};

@@ -14,6 +14,8 @@
 namespace Database::SQL::MRDS {
 
     class ObjectMgmt : public MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDS ObjectMgmt"};
 
     protected:
         const std::string SCHEMA{"configure"};

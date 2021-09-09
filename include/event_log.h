@@ -13,21 +13,10 @@
 
 namespace Database::SQL::MRDS {
 
-//    namespace DB_SCHEMA {
-//        struct event_log_vehicle {
-//            std::string msg_uuid;
-//            std::string event_class;
-//            std::string vehicle_id;
-//            std::string vehicle_status;
-//            std::string vehicle_location;
-//            std::string carrier_id;
-//            std::string comment;
-//        };
-//    }
-
     class EventLog : public MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDS EventLog"};
 
-    protected:
     protected:
         const std::string SCHEMA{"production"};
         const std::string TABLE_EVENT_LOG_VEHICLE{"event_log_vehicle"};

@@ -17,6 +17,9 @@ namespace Database::SQL::MRDS {
     };
 
     class MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDSDB"};
+
     protected:
         std::shared_ptr<Database::SQL::QtConnector> connector_;
 

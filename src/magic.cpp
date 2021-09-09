@@ -7,14 +7,14 @@
 using namespace Database::SQL::MRDS;
 
 std::map<std::string, std::string> Magic::get_magic_map() {
-    LogTool::_log("get_magic_map", "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("get_magic_map", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT key, value "
                           "FROM %1%.%2%.%3%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "magic");
-    LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
+            this->TABLE_MAGIC);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -26,7 +26,7 @@ std::map<std::string, std::string> Magic::get_magic_map() {
         auto value = query->value(loc++).toString().toStdString();
         magic_map_[key] = value;
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("key: " + key + " value: " + magic_map_[key], "MRDS Magic", boost::log::trivial::trace);
+            LogTool::_log("key: " + key + " value: " + magic_map_[key], LOGOUT_CLASS, boost::log::trivial::trace);
         }
         querySize++;
     }
@@ -37,16 +37,16 @@ std::map<std::string, std::string> Magic::get_magic_map() {
 }
 
 std::string Magic::get_magic_value(const std::string &key) {
-    LogTool::_log("get_magic_value", "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("get_magic_value", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT value "
                           "FROM %1%.%2%.%3% "
                           "WHERE key=%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "magic" %
+            this->TABLE_MAGIC %
             null_(key));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -56,7 +56,7 @@ std::string Magic::get_magic_value(const std::string &key) {
         auto loc{0};
         value = query->value(loc++).toString().toStdString();
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("key: " + key + " value: " + value, "MRDS Magic", boost::log::trivial::trace);
+            LogTool::_log("key: " + key + " value: " + value, LOGOUT_CLASS, boost::log::trivial::trace);
         }
         querySize++;
     }
@@ -67,7 +67,7 @@ std::string Magic::get_magic_value(const std::string &key) {
 }
 
 void Magic::set_magic_map(const std::map<std::string, std::string> map) {
-    LogTool::_log("set_magic_map", "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("set_magic_map", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto compare_diff_map = [=]() -> std::map<std::string, std::string> {
         auto mrdsdb_magic_map = this->get_magic_map();
@@ -77,11 +77,11 @@ void Magic::set_magic_map(const std::map<std::string, std::string> map) {
             if (mrdsdb_magic_map[key] != value) {
                 diff_map[key] = value;
                 if (mrdsdb_magic_map.find(key) == mrdsdb_magic_map.end())
-                    LogTool::_log("Magic change key: " + key + " value: " + value, "MRDS Magic",
+                    LogTool::_log("Magic change key: " + key + " value: " + value, LOGOUT_CLASS,
                                   boost::log::trivial::trace);
                 else
                     LogTool::_log("Magic change key: " + key + " value: " + mrdsdb_magic_map[key] + " -> " + value,
-                                  "MRDS Magic",
+                                  LOGOUT_CLASS,
                                   boost::log::trivial::trace);
             }
         }
@@ -95,16 +95,16 @@ void Magic::set_magic_map(const std::map<std::string, std::string> map) {
 }
 
 void Magic::set_magic_value(const std::string &key, const std::string &value) {
-    LogTool::_log("set_magic_value", "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("set_magic_value", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT key "
                           "FROM %1%.%2%.%3% "
                           "WHERE key=%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "magic" %
+            this->TABLE_MAGIC %
             null_(key));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     if (!query->next()) {
         auto queryCmd = boost::str(
@@ -112,10 +112,10 @@ void Magic::set_magic_value(const std::string &key, const std::string &value) {
                               "VALUES(%4%, %5%);") %
                 this->connector_->get_database_host().database %
                 this->SCHEMA %
-                "magic" %
+                this->TABLE_MAGIC %
                 null_(key) %
                 null_(value));
-        LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);
     } else {
         auto update_ts = this->get_datetime(DT_SOURCE::SYSTEM);
@@ -125,11 +125,11 @@ void Magic::set_magic_value(const std::string &key, const std::string &value) {
                               "WHERE key=%6%;") %
                 this->connector_->get_database_host().database %
                 this->SCHEMA %
-                "magic" %
+                this->TABLE_MAGIC %
                 null_(value) %
                 null_(update_ts) %
                 null_(key));
-        LogTool::_log("query cmd: " + queryCmd, "MRDS Magic", boost::log::trivial::trace);
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);
     }
 }

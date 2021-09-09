@@ -14,6 +14,9 @@
 namespace Database::SQL::MRDS {
 
     class Transfer : public MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDS Transfer"};
+
     public:
         enum TS_ATTRIBUTE {
             update_ts,

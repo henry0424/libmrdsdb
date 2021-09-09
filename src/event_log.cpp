@@ -7,7 +7,7 @@
 using namespace Database::SQL::MRDS;
 
 void EventLog::insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
-    LogTool::_log("insert_vehicle_event", "MRDS EventLog", boost::log::trivial::trace);
+    LogTool::_log("insert_vehicle_event", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.msg_uuid "
                           "FROM %1%.%2%.%3% "
@@ -17,7 +17,7 @@ void EventLog::insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
             this->TABLE_EVENT_LOG_VEHICLE %
             null_(log.msg_uuid));
 
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EventLog", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     if (!query->next()) {
         auto queryCmd = boost::str(
@@ -34,7 +34,7 @@ void EventLog::insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
                 null_(log.vehicle_location) %
                 null_(log.carrier_id) %
                 null_(log.comment));
-        LogTool::_log("query cmd: " + queryCmd, "MRDS EventLog", boost::log::trivial::trace);
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);
     } else {
         this->update_vehicle_event(log);
@@ -42,7 +42,7 @@ void EventLog::insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
 }
 
 void EventLog::update_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
-    LogTool::_log("update_vehicle_event", "MRDS EventLog", boost::log::trivial::trace);
+    LogTool::_log("update_vehicle_event", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.msg_uuid "
                           "FROM %1%.%2%.%3% "
@@ -52,7 +52,7 @@ void EventLog::update_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
             this->TABLE_EVENT_LOG_VEHICLE %
             null_(log.msg_uuid));
 
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EventLog", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     if (query->next()) {
         auto queryCmd = boost::str(
@@ -69,7 +69,7 @@ void EventLog::update_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
                 null_(log.carrier_id) %
                 null_(log.comment) %
                 null_(log.msg_uuid));
-        LogTool::_log("query cmd: " + queryCmd, "MRDS EventLog", boost::log::trivial::trace);
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);
     } else {
         this->insert_vehicle_event(log);

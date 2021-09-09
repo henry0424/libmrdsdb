@@ -7,14 +7,14 @@
 using namespace Database::SQL::MRDS;
 
 std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
-    LogTool::_log("get_object_mgmt_list", "MRDS ObjectMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_object_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT obj_uid, obj_id, enable, create_ts, update_ts, region, equipment_class, vendor "
                           "FROM %1%.%2%.%3%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_OBJECT_MGMT);
-    LogTool::_log("query cmd: " + queryCmd, "MRDS ObjectMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -33,16 +33,16 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
         object_mgmt_.vendor = query->value(loc++).toString().toStdString();
         list_.push_back(object_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
+            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("obj_id: " + object_mgmt_.obj_id, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
+            LogTool::_log("create_ts: " + object_mgmt_.create_ts, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("update_ts: " + object_mgmt_.update_ts, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("region: " + object_mgmt_.region, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("vendor: " + object_mgmt_.vendor, LOGOUT_CLASS, boost::log::trivial::trace);
         }
         querySize++;
     }
@@ -53,7 +53,7 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
 }
 
 DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_object_mgmt", "MRDS ObjectMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_object_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT obj_uid, obj_id, enable, create_ts, update_ts, region, equipment_class, vendor "
                           "FROM %1%.%2%.%3% "
@@ -62,7 +62,7 @@ DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
             this->SCHEMA %
             this->TABLE_OBJECT_MGMT %
             null_(obj_id));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS ObjectMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     DB_SCHEMA::object_mgmt object_mgmt_;
     if (query->next()) {
@@ -76,16 +76,16 @@ DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
         object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
         object_mgmt_.vendor = query->value(loc++).toString().toStdString();
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("obj_id: " + object_mgmt_.obj_id, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), "MRDS ObjectMgmt",
+            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("obj_id: " + object_mgmt_.obj_id, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("create_ts: " + object_mgmt_.create_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("update_ts: " + object_mgmt_.update_ts, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("region: " + object_mgmt_.region, "MRDS ObjectMgmt", boost::log::trivial::trace);
-            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, "MRDS ObjectMgmt",
+            LogTool::_log("create_ts: " + object_mgmt_.create_ts, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("update_ts: " + object_mgmt_.update_ts, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("region: " + object_mgmt_.region, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vendor: " + object_mgmt_.vendor, "MRDS ObjectMgmt", boost::log::trivial::trace);
+            LogTool::_log("vendor: " + object_mgmt_.vendor, LOGOUT_CLASS, boost::log::trivial::trace);
         }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();

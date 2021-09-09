@@ -14,7 +14,7 @@ MRDSDB::MRDSDB() {
 }
 
 int MRDSDB::connect(const Database::SQL::DatabaseHost host) {
-    LogTool::_log("connect", "MRDS MRDSDB", boost::log::trivial::trace);
+    LogTool::_log("connect", LOGOUT_CLASS, boost::log::trivial::trace);
 
 //    this->connector_.reset();
     if (!this->connector_)
@@ -23,12 +23,12 @@ int MRDSDB::connect(const Database::SQL::DatabaseHost host) {
 }
 
 void MRDSDB::swap_connector(MRDSDB *ptr_mrdsdb) {
-    LogTool::_log("swap", "MRDS MRDSDB", boost::log::trivial::trace);
+    LogTool::_log("swap", LOGOUT_CLASS, boost::log::trivial::trace);
     if (this->connector_)
-        LogTool::_log("old connection name:" + this->connector_->get_connection_name(), "MRDS MRDSDB",
+        LogTool::_log("old connection name:" + this->connector_->get_connection_name(), LOGOUT_CLASS,
                       boost::log::trivial::trace);
     this->connector_.swap(ptr_mrdsdb->connector_);
-    LogTool::_log("new connection name:" + this->connector_->get_connection_name(), "MRDS MRDSDB",
+    LogTool::_log("new connection name:" + this->connector_->get_connection_name(), LOGOUT_CLASS,
                   boost::log::trivial::trace);
 }
 

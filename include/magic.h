@@ -14,9 +14,12 @@
 namespace Database::SQL::MRDS {
 
     class Magic : public MRDSDB {
+    private:
+        const std::string LOGOUT_CLASS{"MRDS Magic"};
 
     protected:
         const std::string SCHEMA{"messy"};
+        const std::string TABLE_MAGIC{"magic"};
 
     public:
         std::map<std::string, std::string> get_magic_map();
