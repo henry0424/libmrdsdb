@@ -81,7 +81,13 @@ namespace Database::SQL::MRDS {
             std::string magic;
         };
 
-        //
+        //VehicleStatus
+        struct vehicle_status {
+            std::string vehicle_id;
+            std::string vehicle_location;
+            std::string vehicle_status;
+            std::string battery_status;
+        };
 
         //ParkingMgmt
         struct parking_mgmt {

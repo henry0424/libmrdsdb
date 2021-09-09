@@ -79,3 +79,8 @@ add_executable(test_parking test/test_parking.cpp)
 target_link_libraries(test_parking
         mrdsdb
         )
+
+add_executable(test_vehicle_status test/test_vehicle_status.cpp)
+target_link_libraries(test_vehicle_status
+        mrdsdb
+        )
