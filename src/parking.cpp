@@ -9,6 +9,10 @@
 
 using namespace Database::SQL::MRDS;
 
+ParkingMgmt::ParkingMgmt(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("ParkingMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::parking_mgmt> ParkingMgmt::get_parking_mgmt_list(const std::string &keyword) {
     LogTool::_log("get_parking_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
@@ -80,6 +84,10 @@ std::vector<DB_SCHEMA::parking_mgmt> ParkingMgmt::get_parking_mgmt_list(const st
 
 //*****************************************************//
 //*****************************************************//
+
+ParkingStatus::ParkingStatus(const DATABASE_NAME db) : ParkingMgmt(db) {
+    LogTool::_log("ParkingStatus *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
 
 std::vector<DB_SCHEMA::parking_status> ParkingStatus::get_parking_status_list(const std::string &keyword) {
     LogTool::_log("get_parking_status_list", LOGOUT_CLASS, boost::log::trivial::trace);

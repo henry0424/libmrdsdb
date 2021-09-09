@@ -6,6 +6,11 @@
 
 using namespace Database::SQL::MRDS;
 
+EventLog::EventLog(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("EventLog *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
+
 void EventLog::insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log) {
     LogTool::_log("insert_vehicle_event", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(

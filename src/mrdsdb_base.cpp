@@ -9,16 +9,21 @@
 
 using namespace Database::SQL::MRDS;
 
-MRDSDB::MRDSDB() {
-
+MRDSDB::MRDSDB(const DATABASE_NAME db) {
+    database_name_ = db;
 }
 
 int MRDSDB::connect(const Database::SQL::DatabaseHost host) {
     LogTool::_log("connect", LOGOUT_CLASS, boost::log::trivial::trace);
 
 //    this->connector_.reset();
-    if (!this->connector_)
-        this->connector_ = std::make_shared<Database::SQL::QtConnector>();
+    if (!this->connector_) {
+        if (database_name_ == DATABASE_NAME::POSTGRESQL)
+            this->connector_ = std::make_shared<Database::SQL::PostgreSQLConn>();
+        if (database_name_ == DATABASE_NAME::SQLSERVER)
+            this->connector_ = std::make_shared<Database::SQL::SQLServerConn>();
+    }
+
     return this->connector_->connect(host);
 }
 

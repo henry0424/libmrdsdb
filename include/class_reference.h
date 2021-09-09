@@ -24,6 +24,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_EVENT_CLASS{"event_class"};
 
     public:
+        ClassReference(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         std::vector<DB_SCHEMA::carrier_class> get_carrier_class_list();
 
         std::vector<DB_SCHEMA::equipment_class> get_equipment_class_list();

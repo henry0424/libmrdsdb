@@ -45,6 +45,9 @@ namespace Database::SQL {
 
 
     class Connector {
+    private:
+        const std::string LOGOUT_CLASS{"Connector"};
+
     protected:
         std::mutex mutex_;
         std::string uuid_;
@@ -62,6 +65,9 @@ namespace Database::SQL {
     };
 
     class QtConnector : public Connector {
+    private:
+        const std::string LOGOUT_CLASS{"QtConnector"};
+
     protected:
         std::shared_ptr<QSqlDatabase> qt_db_;
         std::shared_ptr<QSqlQuery> qt_query_;
@@ -82,6 +88,21 @@ namespace Database::SQL {
         std::string get_connection_name();
     };
 
+    class PostgreSQLConn : public QtConnector {
+    private:
+        const std::string LOGOUT_CLASS{"PostgreSQLConn"};
+
+    };
+
+    class SQLServerConn : public QtConnector {
+    private:
+        const std::string LOGOUT_CLASS{"SQLServerConn"};
+        const std::string QT_SQL_DRIVER{"QODBC3"};
+
+
+    public:
+        int connect(const DatabaseHost host) override;
+    };
 }
 
 

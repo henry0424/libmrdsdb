@@ -6,6 +6,10 @@
 
 using namespace Database::SQL::MRDS;
 
+VehicleStatus::VehicleStatus(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("VehicleStatus *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::vehicle_status>
 Database::SQL::MRDS::VehicleStatus::get_vehicle_status_list(const std::string &keyword) {
     LogTool::_log("get_vehicle_status_list", LOGOUT_CLASS, boost::log::trivial::trace);

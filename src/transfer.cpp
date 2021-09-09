@@ -6,6 +6,10 @@
 
 using namespace Database::SQL::MRDS;
 
+Transfer::Transfer(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("Transfer *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::transfer_processing> Transfer::get_transfer_list(const std::string &cmcid) {
     LogTool::_log("get_transfer_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto where = [=]() -> std::string {

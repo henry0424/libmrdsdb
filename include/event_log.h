@@ -22,6 +22,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_EVENT_LOG_VEHICLE{"event_log_vehicle"};
 
     public:
+        EventLog(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         void insert_vehicle_event(const DB_SCHEMA::event_log_vehicle log);
 
         void update_vehicle_event(const DB_SCHEMA::event_log_vehicle log);

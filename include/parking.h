@@ -22,6 +22,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_PARKING_MGMT{"parking_mgmt"};
 
     public:
+        ParkingMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         std::vector<DB_SCHEMA::parking_mgmt> get_parking_mgmt_list(const std::string &keyword = std::string());
 
     };
@@ -35,6 +37,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_PARKING_STATUS{"parking_status"};
 
     public:
+        ParkingStatus(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         std::vector<DB_SCHEMA::parking_status> get_parking_status_list(const std::string &keyword = std::string());
 
         void update_parking_status(const DB_SCHEMA::parking_status parking_status);

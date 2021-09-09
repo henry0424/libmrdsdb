@@ -22,6 +22,8 @@ namespace Database::SQL::MRDS {
         const std::string TABLE_MAGIC{"magic"};
 
     public:
+        Magic(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         std::map<std::string, std::string> get_magic_map();
 
         std::string get_magic_value(const std::string &key);

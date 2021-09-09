@@ -11,6 +11,11 @@
 
 namespace Database::SQL::MRDS {
 
+    enum DATABASE_NAME {
+        POSTGRESQL,
+        SQLSERVER
+    };
+
     enum DT_SOURCE {
         SYSTEM,
         DATABASE
@@ -21,10 +26,11 @@ namespace Database::SQL::MRDS {
         const std::string LOGOUT_CLASS{"MRDSDB"};
 
     protected:
+        DATABASE_NAME database_name_;
         std::shared_ptr<Database::SQL::QtConnector> connector_;
 
     public:
-        MRDSDB();
+        MRDSDB(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
         virtual ~MRDSDB() = default;
 

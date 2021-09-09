@@ -6,6 +6,10 @@
 
 using namespace Database::SQL::MRDS;
 
+Magic::Magic(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("Magic *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::map<std::string, std::string> Magic::get_magic_map() {
     LogTool::_log("get_magic_map", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(

@@ -47,28 +47,28 @@ Database::SQL::Connector::Connector() {
     this->uuid_ = boost::uuids::to_string(uuid_sgen);
 
     LogTool::_log_init(LogOutput::FILE | LogOutput::SCEEN, "./Log/", "SQL_LOG_");
-    LogTool::_log("Connector Init (" + this->uuid_ + ")", "Qt Connector", boost::log::trivial::info);
+    LogTool::_log("Connector Init (" + this->uuid_ + ")", LOGOUT_CLASS, boost::log::trivial::info);
 
 }
 
 Database::SQL::QtConnector::QtConnector() {
-    LogTool::_log("QtConnector Init (" + this->uuid_ + ")", "Qt Connector", boost::log::trivial::info);
+    LogTool::_log("QtConnector Init (" + this->uuid_ + ")", LOGOUT_CLASS, boost::log::trivial::info);
 }
 
 Database::SQL::QtConnector::~QtConnector() {
-    LogTool::_log("QtConnector Delete (" + this->uuid_ + ")", "Qt Connector", boost::log::trivial::info);
+    LogTool::_log("QtConnector Delete (" + this->uuid_ + ")", LOGOUT_CLASS, boost::log::trivial::info);
     this->close();
 }
 
 int Database::SQL::QtConnector::connect(const DatabaseHost host) {
     this->databasehost_ = std::make_shared<DatabaseHost>(host);
 
-    LogTool::_log("host: " + this->databasehost_->host, "Qt Connector", boost::log::trivial::info);
-    LogTool::_log("port: " + std::to_string(this->databasehost_->port), "Qt Connector", boost::log::trivial::info);
-    LogTool::_log("user: " + this->databasehost_->user, "Qt Connector", boost::log::trivial::info);
-    LogTool::_log("passwd: " + calculate_hash(this->databasehost_->passwd), "Qt Connector", boost::log::trivial::info);
-    LogTool::_log("database: " + this->databasehost_->database, "Qt Connector", boost::log::trivial::info);
-    LogTool::_log("driver: " + this->databasehost_->driver, "Qt Connector", boost::log::trivial::info);
+    LogTool::_log("host: " + this->databasehost_->host, LOGOUT_CLASS, boost::log::trivial::info);
+    LogTool::_log("port: " + std::to_string(this->databasehost_->port), LOGOUT_CLASS, boost::log::trivial::info);
+    LogTool::_log("user: " + this->databasehost_->user, LOGOUT_CLASS, boost::log::trivial::info);
+    LogTool::_log("passwd: " + calculate_hash(this->databasehost_->passwd), LOGOUT_CLASS, boost::log::trivial::info);
+    LogTool::_log("database: " + this->databasehost_->database, LOGOUT_CLASS, boost::log::trivial::info);
+    LogTool::_log("driver: " + this->databasehost_->driver, LOGOUT_CLASS, boost::log::trivial::info);
 
     this->qt_db_ = std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase(
             this->databasehost_->driver.c_str(), QString(this->uuid_.c_str())));
@@ -81,15 +81,15 @@ int Database::SQL::QtConnector::connect(const DatabaseHost host) {
 
     if (this->qt_db_->open())
         LogTool::_log("Connect: " + this->qt_db_->connectionName().toStdString() + " host: " +
-                      this->databasehost_->host + "@" + this->databasehost_->user + " succ", "Qt Connector",
+                      this->databasehost_->user + "@" + this->databasehost_->host + " succ", LOGOUT_CLASS,
                       boost::log::trivial::info);
     else {
         LogTool::_log("Connect: " + this->qt_db_->connectionName().toStdString() + " host: " +
-                      this->databasehost_->host + "@" + this->databasehost_->user + " failed " +
-                      qt_db_->lastError().text().toStdString(), "Qt Connector",
+                      this->databasehost_->user + "@" + this->databasehost_->host + " failed " +
+                      qt_db_->lastError().text().toStdString(), LOGOUT_CLASS,
                       boost::log::trivial::info);
         throw std::runtime_error("Connect: " + this->qt_db_->connectionName().toStdString() + " host: " +
-                                 this->databasehost_->host + "@" + this->databasehost_->user + " failed");
+                                 this->databasehost_->user + "@" + this->databasehost_->host + " failed");
     }
 //    this->qt_query_ = std::make_shared<QSqlQuery>(*qt_db_);
 }
@@ -98,28 +98,28 @@ int Database::SQL::QtConnector::connect(const DatabaseHost host) {
 void Database::SQL::QtConnector::close() {
     std::lock_guard<std::mutex> lock(mutex_);
 
-//    LogTool::_log("QSqlQuery clear+finish", "Qt Connector", boost::log::trivial::trace);
+//    LogTool::_log("QSqlQuery clear+finish", LOGOUT_CLASS, boost::log::trivial::trace);
 //    this->qt_query_->clear();
 //    this->qt_query_->finish();
 
-    LogTool::_log("QSqlDatabase close", "Qt Connector", boost::log::trivial::trace);
+    LogTool::_log("QSqlDatabase close", LOGOUT_CLASS, boost::log::trivial::trace);
     this->qt_db_->close();
 
-    LogTool::_log("QSqlDatabase removeDatabase", "Qt Connector", boost::log::trivial::trace);
+    LogTool::_log("QSqlDatabase removeDatabase", LOGOUT_CLASS, boost::log::trivial::trace);
     auto name = this->qt_db_->connectionName();
     QSqlDatabase::removeDatabase(name);
 
-    LogTool::_log("Close:" + std::string(name.toStdString()) + " succ ", "Qt Connector",
+    LogTool::_log("Close:" + std::string(name.toStdString()) + " succ ", LOGOUT_CLASS,
                   boost::log::trivial::trace);
 }
 
 QueryInfo Database::SQL::QtConnector::exec(const std::string &query) {
     std::lock_guard<std::mutex> lock(mutex_);
     auto sql_query_ = std::make_shared<QSqlQuery>(*qt_db_);
-    LogTool::_log("exec: " + query, "Qt Connector", boost::log::trivial::trace);
+    LogTool::_log("exec: " + query, LOGOUT_CLASS, boost::log::trivial::trace);
     if (!sql_query_->exec(query.c_str())) {
         if (LOGOUT_EXEC)
-            LogTool::_log("exec: " + query + " exception", "Qt Connector", boost::log::trivial::error);
+            LogTool::_log("exec: " + query + " exception", LOGOUT_CLASS, boost::log::trivial::error);
         throw Database::Exception::QueryException();
     }
     return sql_query_;
@@ -131,4 +131,59 @@ Database::SQL::DatabaseHost Database::SQL::QtConnector::get_database_host() {
 
 std::string Database::SQL::QtConnector::get_connection_name() {
     return this->qt_db_->connectionName().toStdString();
+}
+
+int Database::SQL::SQLServerConn::connect(const Database::SQL::DatabaseHost host) {
+    LogTool::_log("connect m2", LOGOUT_CLASS, boost::log::trivial::info);
+
+
+    this->qt_db_ = std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase(
+            this->QT_SQL_DRIVER.c_str(), QString(this->uuid_.c_str())));
+
+
+    this->qt_db_->setUserName(host.user.c_str());
+    this->qt_db_->setPassword(host.passwd.c_str());
+
+    std::string hostname{"tcp:127.0.0.1"};
+
+    std::vector<std::string> hostnames;
+    hostnames.clear();
+
+//    hostnames.push_back("tcp:127.0.0.1");
+    auto host_ip = boost::str(boost::format("tcp:%1%") % host.host);
+    hostnames.push_back(host_ip);
+
+    for (auto host_ip: hostnames) {
+        if (!this->qt_db_->isOpen()) {
+            auto ODBC3_DRIVE = boost::str(
+                    boost::format("DRIVER={%1%}; SERVER=%2%; DATABASE=%3%; odbc_cursortype=2") %
+                    "ODBC Driver 17 for SQL Server" %
+                    host_ip %
+                    host.database);
+            this->qt_db_->setDatabaseName(ODBC3_DRIVE.c_str());
+            this->qt_db_->setConnectOptions("SQL_ATTR_LOGIN_TIMEOUT=1");
+
+            LogTool::_log("Connect: " + this->qt_db_->connectionName().toStdString() + " -> " +
+                          std::string(host.user) + "@" + host_ip,
+                          LOGOUT_CLASS, boost::log::trivial::info);
+            if (this->qt_db_->open()) {
+                break;
+            } else {
+                LogTool::_log(
+                        "Connect: " + this->qt_db_->connectionName().toStdString() + " -> " + std::string(host_ip) +
+                        "@" + host.user + " failed", LOGOUT_CLASS,
+                        boost::log::trivial::error);
+            }
+        }
+    }
+
+    if (this->qt_db_->open()) {
+        LogTool::_log(
+                "Connect: " + this->qt_db_->connectionName().toStdString() + " -> " + std::string(host.user) + "@" +
+                host_ip + " succ", LOGOUT_CLASS, boost::log::trivial::info);
+    } else {
+        throw std::runtime_error("Connect: " + this->qt_db_->connectionName().toStdString() + " -> " +
+                                 std::string(host.user) + "@" + host_ip + " failed");
+    }
+//    this->qt_query_ = std::make_shared<QSqlQuery>(*qt_db_);
 }

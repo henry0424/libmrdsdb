@@ -34,6 +34,8 @@ namespace Database::SQL::MRDS {
 
         /* cmcid -> Command And Merged Command.*/
     public:
+        Transfer(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
+
         std::vector<DB_SCHEMA::transfer_processing>
         get_transfer_list(const std::string &cmcid = std::string());
 

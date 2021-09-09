@@ -6,6 +6,10 @@
 
 using namespace Database::SQL::MRDS;
 
+ClassReference::ClassReference(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("ClassReference *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
     LogTool::_log("get_carrier_class_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(

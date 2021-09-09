@@ -6,6 +6,10 @@
 
 using namespace Database::SQL::MRDS;
 
+ObjectMgmt::ObjectMgmt(const DATABASE_NAME db) : MRDSDB(db) {
+    LogTool::_log("ObjectMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
     LogTool::_log("get_object_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
@@ -96,8 +100,12 @@ DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
 //*****************************************************//
 //*****************************************************//
 
+VehicleMgmt::VehicleMgmt(const DATABASE_NAME db) : ObjectMgmt(db) {
+    LogTool::_log("VehicleMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
-    LogTool::_log("get_vehicle_mgmt_list", "MRDS VehicleMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_vehicle_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT vehicle_id, carrier_class, slot_num, battery_threshold_full, battery_threshold_high, battery_threshold_low "
@@ -105,7 +113,7 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_VEHICLE_MGMT);
-    LogTool::_log("query cmd: " + queryCmd, "MRDS VehicleMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -122,19 +130,19 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
         vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
         list_.push_back(vehicle_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
-            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
+            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
+            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
         querySize++;
@@ -146,7 +154,7 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
 }
 
 DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_vehicle_mgmt", "MRDS VehicleMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT vehicle_id, carrier_class, slot_num, battery_threshold_full, battery_threshold_high, battery_threshold_low "
@@ -156,7 +164,7 @@ DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id)
             this->SCHEMA %
             this->TABLE_VEHICLE_MGMT %
             null_(obj_id));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS VehicleMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     DB_SCHEMA::vehicle_mgmt vehicle_mgmt_;
     if (query->next()) {
@@ -168,19 +176,19 @@ DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id)
         vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
         vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, "MRDS VehicleMgmt", boost::log::trivial::trace);
-            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, "MRDS VehicleMgmt",
+            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), "MRDS VehicleMgmt",
+            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
             LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
-                          "MRDS VehicleMgmt",
+                          LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
@@ -192,8 +200,12 @@ DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id)
 //*****************************************************//
 //*****************************************************//
 
+VehicleSlotMgmt::VehicleSlotMgmt(const DATABASE_NAME db) : VehicleMgmt(db) {
+    LogTool::_log("VehicleSlotMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt_list(const std::string &obj_id) {
-    LogTool::_log("get_vehicle_slot_mgmt_list", "MRDS VehicleSlotMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_vehicle_slot_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
         if (obj_id.empty()) {
@@ -217,7 +229,7 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_MGMT %
             where());
-    LogTool::_log("query cmd: " + queryCmd, "MRDS VehicleSlotMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -230,9 +242,9 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
         vehicle_slot_mgmt_.vehicle_slot_id = query->value(loc++).toString().toStdString();
         list_.push_back(vehicle_slot_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
+            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
+            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
         querySize++;
@@ -244,7 +256,7 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
 }
 
 DB_SCHEMA::vehicle_slot_mgmt VehicleSlotMgmt::get_vehicle_slot_mgmt(const std::string &vehicle_slot_id) {
-    LogTool::_log("get_vehicle_slot_mgmt", "MRDS VehicleSlotMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_vehicle_slot_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT obj_id as vehicle_id, obj_port_id as vehicle_slot_id "
@@ -254,7 +266,7 @@ DB_SCHEMA::vehicle_slot_mgmt VehicleSlotMgmt::get_vehicle_slot_mgmt(const std::s
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_MGMT %
             null_(vehicle_slot_id));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS VehicleSlotMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -267,9 +279,9 @@ DB_SCHEMA::vehicle_slot_mgmt VehicleSlotMgmt::get_vehicle_slot_mgmt(const std::s
         vehicle_slot_mgmt_.vehicle_slot_id = query->value(loc++).toString().toStdString();
         list_.push_back(vehicle_slot_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, "MRDS VehicleSlotMgmt",
+            LogTool::_log("vehicle_id: " + vehicle_slot_mgmt_.vehicle_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, "MRDS VehicleSlotMgmt",
+            LogTool::_log("vehicle_slot_id: " + vehicle_slot_mgmt_.vehicle_slot_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
         querySize++;
@@ -282,9 +294,12 @@ DB_SCHEMA::vehicle_slot_mgmt VehicleSlotMgmt::get_vehicle_slot_mgmt(const std::s
 
 //*****************************************************//
 //*****************************************************//
+EquipmentMgmt::EquipmentMgmt(const DATABASE_NAME db) : ObjectMgmt(db) {
+    LogTool::_log("EquipmentMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
 
 std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() {
-    LogTool::_log("get_equipment_mgmt_list", "MRDS EquipmentMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_equipment_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT equipment_id "
@@ -292,7 +307,7 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() 
             this->connector_->get_database_host().database %
             this->SCHEMA %
             "equipment_mgmt");
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -305,7 +320,7 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() 
 
         list_.push_back(equipment_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, "MRDS EquipmentMgmt",
+            LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
 
@@ -318,7 +333,7 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() 
 }
 
 DB_SCHEMA::equipment_mgmt EquipmentMgmt::get_equipment_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_vehicle_mgmt", "MRDS EquipmentMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT equipment_id "
@@ -328,14 +343,14 @@ DB_SCHEMA::equipment_mgmt EquipmentMgmt::get_equipment_mgmt(const std::string &o
             this->SCHEMA %
             "equipment_mgmt" %
             null_(obj_id));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     DB_SCHEMA::equipment_mgmt equipment_mgmt_;
     if (query->next()) {
         auto loc{0};
         equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentMgmt", boost::log::trivial::trace);
+            LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         }
     } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
@@ -346,8 +361,12 @@ DB_SCHEMA::equipment_mgmt EquipmentMgmt::get_equipment_mgmt(const std::string &o
 //*****************************************************//
 //*****************************************************//
 
+EquipmentPortMgmt::EquipmentPortMgmt(const DATABASE_NAME db) : EquipmentMgmt(db) {
+    LogTool::_log("EquipmentPortMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
+}
+
 std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &obj_id) {
-    LogTool::_log("equipment_port_mgmt", "MRDS EquipmentPortMgmt", boost::log::trivial::trace);
+    LogTool::_log("equipment_port_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
         if (obj_id.empty()) {
@@ -371,7 +390,7 @@ std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_por
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_MGMT %
             where());
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentPortMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -384,9 +403,9 @@ std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_por
         equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_port_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
+            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("equipment_port_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
+            LogTool::_log("equipment_port_id: " + equipment_port_mgmt_.equipment_port_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
         querySize++;
@@ -398,7 +417,7 @@ std::vector<DB_SCHEMA::equipment_port_mgmt> EquipmentPortMgmt::get_equipment_por
 }
 
 DB_SCHEMA::equipment_port_mgmt EquipmentPortMgmt::get_equipment_port_mgmt(const std::string &equipment_port_id) {
-    LogTool::_log("get_equipment_port_mgmt", "MRDS EquipmentPortMgmt", boost::log::trivial::trace);
+    LogTool::_log("get_equipment_port_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format(
                     "SELECT obj_id as equipment_id, obj_port_id as equipment_port_id "
@@ -408,7 +427,7 @@ DB_SCHEMA::equipment_port_mgmt EquipmentPortMgmt::get_equipment_port_mgmt(const 
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_MGMT %
             null_(equipment_port_id));
-    LogTool::_log("query cmd: " + queryCmd, "MRDS EquipmentPortMgmt", boost::log::trivial::trace);
+    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
     auto querySize{0};
@@ -421,9 +440,9 @@ DB_SCHEMA::equipment_port_mgmt EquipmentPortMgmt::get_equipment_port_mgmt(const 
         equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
         list_.push_back(equipment_port_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, "MRDS EquipmentPortMgmt",
+            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, "MRDS EquipmentPortMgmt",
+            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
         }
         querySize++;
