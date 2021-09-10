@@ -9,6 +9,7 @@
 #include "class_reference.h"
 #include "object_mgmt.h"
 #include "transfer.h"
+#include "object_port_status.h"
 #include "vehicle_status.h"
 #include "parking.h"
 #include "event_log.h"

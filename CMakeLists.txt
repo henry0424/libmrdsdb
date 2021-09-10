@@ -85,3 +85,8 @@ add_executable(test_vehicle_status test/test_vehicle_status.cpp)
 target_link_libraries(test_vehicle_status
         mrdsdb
         )
+
+add_executable(test_object_port_status test/test_object_port_status.cpp)
+target_link_libraries(test_object_port_status
+        mrdsdb
+        )

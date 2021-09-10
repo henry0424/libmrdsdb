@@ -81,6 +81,13 @@ namespace Database::SQL::MRDS {
             std::string magic;
         };
 
+        //ObjectPortStatus
+        struct object_port_status {
+            std::string obj_id;
+            std::string obj_port_id;
+            std::string carrier_id;
+        };
+
         //VehicleStatus
         struct vehicle_status {
             std::string vehicle_id;

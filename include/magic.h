@@ -7,6 +7,7 @@
 
 #include <map>
 #include "mrdsdb_base.h"
+#include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
