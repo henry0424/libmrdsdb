@@ -28,6 +28,7 @@ add_library(mrdsdb SHARED
         src/object_mgmt.cpp
         src/transfer.cpp
         src/vehicle_status.cpp
+        src/object_port_status.cpp
         src/parking.cpp
         src/event_log.cpp
         src/magic.cpp

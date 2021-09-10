@@ -39,7 +39,7 @@ Database::SQL::calculate_hash(const std::string &content, const std::string &has
 }
 
 Database::SQL::Connector::Connector() {
-
+    std::lock_guard<std::mutex> lock(s_mutex_);
     boost::uuids::name_generator sgen(boost::uuids::nil_uuid());
     auto uuid_sgen = sgen(std::string(
             boost::posix_time::to_iso_extended_string(

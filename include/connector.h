@@ -11,6 +11,7 @@
 #include <mutex>
 #include <locale>
 #include <codecvt>
+#include <mutex>
 
 #include <boost/format.hpp>
 #include <boost/date_time.hpp>
@@ -28,6 +29,8 @@
 typedef std::shared_ptr<QSqlQuery> QueryInfo;
 
 using namespace Database::Log;
+
+static std::mutex s_mutex_;
 
 namespace Database::SQL {
 
