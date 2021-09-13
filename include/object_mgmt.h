@@ -25,9 +25,7 @@ namespace Database::SQL::MRDS {
     public:
         ObjectMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::object_mgmt> get_object_mgmt_list();
-
-        DB_SCHEMA::object_mgmt get_object_mgmt(const std::string &obj_id);
+        std::vector<DB_SCHEMA::object_mgmt> get_object_mgmt_list(const std::string &keyword = std::string());
 
     };
 

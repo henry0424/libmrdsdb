@@ -10,14 +10,42 @@ ObjectMgmt::ObjectMgmt(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("ObjectMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
+std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list(const std::string &keyword) {
     LogTool::_log("get_object_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
+
+    auto where = [=]() -> std::string {
+        if (keyword.empty())
+            return ";";
+        else {
+            auto queryCmd = boost::str(
+                    boost::format(
+                            "WHERE %1%.%2%.%3%.obj_uid LIKE '%%%4%%%' "
+                            "OR %1%.%2%.%3%.obj_id LIKE '%%%4%%%'"
+                            "OR CAST(%1%.%2%.%3%.enable as varchar) LIKE '%%%4%%%'"
+                            "OR %1%.%2%.%3%.region LIKE '%%%4%%%'"
+                            "OR %1%.%2%.%3%.equipment_class LIKE '%%%4%%%'"
+                            "OR %1%.%2%.%3%.vendor LIKE '%%%4%%%';") %
+                    this->connector_->get_database_host().database %
+                    this->SCHEMA %
+                    this->TABLE_OBJECT_MGMT %
+                    keyword);
+            return queryCmd;
+        }
+    };
+
     auto queryCmd = boost::str(
-            boost::format("SELECT obj_uid, obj_id, enable, create_ts, update_ts, region, equipment_class, vendor "
-                          "FROM %1%.%2%.%3%;") %
+            boost::format("SELECT %1%.%2%.%3%.obj_uid, "
+                          "%1%.%2%.%3%.obj_id, "
+                          "%1%.%2%.%3%.enable, "
+                          "%1%.%2%.%3%.region, "
+                          "%1%.%2%.%3%.equipment_class, "
+                          "%1%.%2%.%3%.vendor "
+                          "FROM %1%.%2%.%3% "
+                          "%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_OBJECT_MGMT);
+            this->TABLE_OBJECT_MGMT %
+            where());
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -27,25 +55,21 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
     while (query->next()) {
         auto loc{0};
         DB_SCHEMA::object_mgmt object_mgmt_;
-        object_mgmt_.obj_uid = query->value(loc++).toString().toStdString();
-        object_mgmt_.obj_id = query->value(loc++).toString().toStdString();
-        object_mgmt_.enable = query->value(loc++).toBool();
-        object_mgmt_.create_ts = query->value(loc++).toString().toStdString();
-        object_mgmt_.update_ts = query->value(loc++).toString().toStdString();
-        object_mgmt_.region = query->value(loc++).toString().toStdString();
-        object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
-        object_mgmt_.vendor = query->value(loc++).toString().toStdString();
+        {
+            object_mgmt_.obj_uid = query->value(loc++).toString().toStdString();
+            object_mgmt_.obj_id = query->value(loc++).toString().toStdString();
+            object_mgmt_.enable = query->value(loc++).toBool();
+            object_mgmt_.region = query->value(loc++).toString().toStdString();
+            object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
+            object_mgmt_.vendor = query->value(loc++).toString().toStdString();
+        }
         list_.push_back(object_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
             LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, LOGOUT_CLASS, boost::log::trivial::trace);
             LogTool::_log("obj_id: " + object_mgmt_.obj_id, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("create_ts: " + object_mgmt_.create_ts, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("update_ts: " + object_mgmt_.update_ts, LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), LOGOUT_CLASS, boost::log::trivial::trace);
             LogTool::_log("region: " + object_mgmt_.region, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
+            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, LOGOUT_CLASS, boost::log::trivial::trace);
             LogTool::_log("vendor: " + object_mgmt_.vendor, LOGOUT_CLASS, boost::log::trivial::trace);
         }
         querySize++;
@@ -54,47 +78,7 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list() {
         throw Database::Exception::NoDataException();
 
     return list_;
-}
 
-DB_SCHEMA::object_mgmt ObjectMgmt::get_object_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_object_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto queryCmd = boost::str(
-            boost::format("SELECT obj_uid, obj_id, enable, create_ts, update_ts, region, equipment_class, vendor "
-                          "FROM %1%.%2%.%3% "
-                          "WHERE obj_id=%4%;") %
-            this->connector_->get_database_host().database %
-            this->SCHEMA %
-            this->TABLE_OBJECT_MGMT %
-            null_(obj_id));
-    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-    auto query = this->connector_->exec(queryCmd);
-    DB_SCHEMA::object_mgmt object_mgmt_;
-    if (query->next()) {
-        auto loc{0};
-        object_mgmt_.obj_uid = query->value(loc++).toString().toStdString();
-        object_mgmt_.obj_id = query->value(loc++).toString().toStdString();
-        object_mgmt_.enable = query->value(loc++).toBool();
-        object_mgmt_.create_ts = query->value(loc++).toString().toStdString();
-        object_mgmt_.update_ts = query->value(loc++).toString().toStdString();
-        object_mgmt_.region = query->value(loc++).toString().toStdString();
-        object_mgmt_.equipment_class = query->value(loc++).toString().toStdString();
-        object_mgmt_.vendor = query->value(loc++).toString().toStdString();
-        if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("obj_uid: " + object_mgmt_.obj_uid, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("obj_id: " + object_mgmt_.obj_id, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("enable: " + std::to_string(object_mgmt_.enable), LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("create_ts: " + object_mgmt_.create_ts, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("update_ts: " + object_mgmt_.update_ts, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("region: " + object_mgmt_.region, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("equipment_class: " + object_mgmt_.equipment_class, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("vendor: " + object_mgmt_.vendor, LOGOUT_CLASS, boost::log::trivial::trace);
-        }
-    } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
-        throw Database::Exception::NoDataException();
-
-    return object_mgmt_;
 }
 
 //*****************************************************//
@@ -220,7 +204,7 @@ void VehicleMgmt::update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_stat
                 vehicle_status.battery_threshold_high %
                 vehicle_status.battery_threshold_low %
                 null_(vehicle_status.macaddr) %
-                null_(vehicle_status.ipaddr+"/32") %
+                null_(vehicle_status.ipaddr + "/32") %
                 null_(vehicle_status.vehicle_id));
         LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);

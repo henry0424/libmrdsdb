@@ -17,14 +17,14 @@ int main(int argc, char **argv) {
     sql_host.passwd = "itriacs";
     sql_host.database = "mrdsdb";
 
-    if (0) {
+    if (1) {
         auto mrdsdb = std::make_shared<MRDS::ObjectMgmt>();
         mrdsdb->connect(sql_host);
 
         auto object_mgmt_list = mrdsdb->get_object_mgmt_list();
-        auto object_mgmt = mrdsdb->get_object_mgmt(object_mgmt_list.at(0).obj_id);
+        auto object_mgmt = mrdsdb->get_object_mgmt_list(object_mgmt_list.at(0).obj_id);
     }
-    if (1) {
+    if (0) {
         auto mrdsdb = std::make_shared<MRDS::VehicleMgmt>();
         mrdsdb->connect(sql_host);
 
