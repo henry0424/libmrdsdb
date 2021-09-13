@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     sql_host.passwd = "itriacs";
     sql_host.database = "mrdsdb";
 
-    if (1) {
+    if (0) {
         auto mrdsdb = std::make_shared<MRDS::ObjectMgmt>();
         mrdsdb->connect(sql_host);
 
@@ -37,13 +37,13 @@ int main(int argc, char **argv) {
         vehicle_mgmt.at(0).ipaddr="192.168.99.1";
         mrdsdb->update_vehicle_mgmt(vehicle_mgmt.at(0));
     }
-    if (0) {
+    if (1) {
         auto mrdsdb = std::make_shared<MRDS::VehicleSlotMgmt>();
         mrdsdb->connect(sql_host);
 
         auto vehicle_slot_mgmt_list = mrdsdb->get_vehicle_slot_mgmt_list();
         auto vehicle_slot_mgmt_list_2 = mrdsdb->get_vehicle_slot_mgmt_list(vehicle_slot_mgmt_list.at(0).vehicle_id);
-        auto vehicle_slot_mgmt = mrdsdb->get_vehicle_slot_mgmt(vehicle_slot_mgmt_list.at(0).vehicle_slot_id);
+        auto vehicle_slot_mgmt = mrdsdb->get_vehicle_slot_mgmt_list(vehicle_slot_mgmt_list.at(0).vehicle_slot_id);
     }
     if (0) {
         auto mrdsdb = std::make_shared<MRDS::EquipmentMgmt>();
