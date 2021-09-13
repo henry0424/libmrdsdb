@@ -90,6 +90,7 @@ VehicleMgmt::VehicleMgmt(const DATABASE_NAME db) : ObjectMgmt(db) {
 
 std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) {
     LogTool::_log("get_vehicle_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
+
     auto where = [=]() -> std::string {
         if (keyword.empty())
             return ";";
@@ -173,6 +174,7 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list(const st
 
 void VehicleMgmt::update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_status) {
     LogTool::_log("update_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
+
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.vehicle_id "
                           "FROM %1%.%2%.%3% "
@@ -287,15 +289,32 @@ EquipmentMgmt::EquipmentMgmt(
     LogTool::_log("EquipmentMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() {
+std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list(const std::string &keyword) {
     LogTool::_log("get_equipment_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
+
+    auto where = [=]() -> std::string {
+        if (keyword.empty())
+            return ";";
+        else {
+            auto queryCmd = boost::str(
+                    boost::format(
+                            "WHERE %1%.%2%.%3%.equipment_id LIKE '%%%4%%%';") %
+                    this->connector_->get_database_host().database %
+                    this->SCHEMA %
+                    this->TABLE_EQUIPMENT_MGMT %
+                    keyword);
+            return queryCmd;
+        }
+    };
+
     auto queryCmd = boost::str(
-            boost::format(
-                    "SELECT equipment_id "
-                    "FROM %1%.%2%.%3%;") %
+            boost::format("SELECT %1%.%2%.%3%.equipment_id "
+                          "FROM %1%.%2%.%3% "
+                          "%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            "equipment_mgmt");
+            this->TABLE_EQUIPMENT_MGMT %
+            where());
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -305,46 +324,19 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list() 
     while (query->next()) {
         auto loc{0};
         DB_SCHEMA::equipment_mgmt equipment_mgmt_;
-        equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
-
+        {
+            equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
+        }
         list_.push_back(equipment_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
+            LogTool::_log("equipment_id: " + equipment_mgmt_.equipment_id, LOGOUT_CLASS, boost::log::trivial::trace);
         }
-
         querySize++;
     }
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
     return list_;
-}
-
-DB_SCHEMA::equipment_mgmt EquipmentMgmt::get_equipment_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto queryCmd = boost::str(
-            boost::format(
-                    "SELECT equipment_id "
-                    "FROM %1%.%2%.%3% "
-                    "WHERE equipment_id=%4%;") %
-            this->connector_->get_database_host().database %
-            this->SCHEMA %
-            "equipment_mgmt" %
-            null_(obj_id));
-    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-    auto query = this->connector_->exec(queryCmd);
-    DB_SCHEMA::equipment_mgmt equipment_mgmt_;
-    if (query->next()) {
-        auto loc{0};
-        equipment_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
-        if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-        }
-    } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
-        throw Database::Exception::NoDataException();
-
-    return equipment_mgmt_;
 }
 
 //*****************************************************//
@@ -356,27 +348,35 @@ EquipmentPortMgmt::EquipmentPortMgmt(
 }
 
 std::vector<DB_SCHEMA::equipment_port_mgmt>
-EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &obj_id) {
+EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &keyword) {
     LogTool::_log("equipment_port_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
-        if (obj_id.empty()) {
+        if (keyword.empty()) {
             auto queryCmd = boost::str(
-                    boost::format("SELECT equipment_id FROM %1%.%2%.%4%") %
+                    boost::format("WHERE obj_id IN (SELECT equipment_id FROM %1%.%2%.%3%)") %
                     this->connector_->get_database_host().database %
                     this->SCHEMA %
-                    this->TABLE_OBJECT_PORT_MGMT %
                     this->TABLE_EQUIPMENT_MGMT);
             return queryCmd;
         } else {
-            return null_(obj_id);
+            auto queryCmd = boost::str(
+                    boost::format("WHERE obj_id IN (SELECT equipment_id FROM %1%.%2%.%4%) "
+                                  "AND %1%.%2%.%3%.obj_port_id LIKE '%%%5%%%';") %
+                    this->connector_->get_database_host().database %
+                    this->SCHEMA %
+                    this->TABLE_OBJECT_PORT_MGMT %
+                    this->TABLE_EQUIPMENT_MGMT %
+                    keyword);
+            return queryCmd;
         }
     };
 
     auto queryCmd = boost::str(
-            boost::format("SELECT obj_id as equipment_id, obj_port_id as equipment_port_id "
+            boost::format("SELECT obj_id as equipment_id, "
+                          "obj_port_id as equipment_port_id "
                           "FROM %1%.%2%.%3% "
-                          "WHERE obj_id IN (%4%);") %
+                          "%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_MGMT %
@@ -405,42 +405,5 @@ EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &obj_id) {
         throw Database::Exception::NoDataException();
 
     return list_;
-}
-
-DB_SCHEMA::equipment_port_mgmt EquipmentPortMgmt::get_equipment_port_mgmt(const std::string &equipment_port_id) {
-    LogTool::_log("get_equipment_port_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto queryCmd = boost::str(
-            boost::format(
-                    "SELECT obj_id as equipment_id, obj_port_id as equipment_port_id "
-                    "FROM %1%.%2%.%3% "
-                    "WHERE obj_port_id=%4%;") %
-            this->connector_->get_database_host().database %
-            this->SCHEMA %
-            this->TABLE_OBJECT_PORT_MGMT %
-            null_(equipment_port_id));
-    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-    auto query = this->connector_->exec(queryCmd);
-
-    auto querySize{0};
-    std::vector<DB_SCHEMA::equipment_port_mgmt> list_;
-    list_.clear();
-    while (query->next()) {
-        auto loc{0};
-        DB_SCHEMA::equipment_port_mgmt equipment_port_mgmt_;
-        equipment_port_mgmt_.equipment_id = query->value(loc++).toString().toStdString();
-        equipment_port_mgmt_.equipment_port_id = query->value(loc++).toString().toStdString();
-        list_.push_back(equipment_port_mgmt_);
-        if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("equipment_id: " + equipment_port_mgmt_.equipment_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("vehicle_slot_id: " + equipment_port_mgmt_.equipment_port_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-        }
-        querySize++;
-    }
-    if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
-        throw Database::Exception::NoDataException();
-
-    return list_.at(0);
 }
 

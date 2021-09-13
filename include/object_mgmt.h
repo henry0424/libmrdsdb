@@ -26,7 +26,6 @@ namespace Database::SQL::MRDS {
         ObjectMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
         std::vector<DB_SCHEMA::object_mgmt> get_object_mgmt_list(const std::string &keyword = std::string());
-
     };
 
     class VehicleMgmt : public ObjectMgmt {
@@ -51,11 +50,8 @@ namespace Database::SQL::MRDS {
     public:
         VehicleSlotMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list(const std::string &keyword = std::string());
-
-//        std::vector<DB_SCHEMA::vehicle_slot_mgmt> get_vehicle_slot_mgmt_list(const std::string &obj_id = std::string());
-//
-//        DB_SCHEMA::vehicle_slot_mgmt get_vehicle_slot_mgmt(const std::string &vehicle_slot_id);
+        std::vector<DB_SCHEMA::vehicle_slot_mgmt>
+        get_vehicle_slot_mgmt_list(const std::string &keyword = std::string());
     };
 
     class EquipmentMgmt : public ObjectMgmt {
@@ -68,9 +64,7 @@ namespace Database::SQL::MRDS {
     public:
         EquipmentMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::equipment_mgmt> get_equipment_mgmt_list();
-
-        DB_SCHEMA::equipment_mgmt get_equipment_mgmt(const std::string &obj_id);
+        std::vector<DB_SCHEMA::equipment_mgmt> get_equipment_mgmt_list(const std::string &keyword = std::string());
     };
 
     class EquipmentPortMgmt : public EquipmentMgmt {
@@ -81,9 +75,7 @@ namespace Database::SQL::MRDS {
         EquipmentPortMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
         std::vector<DB_SCHEMA::equipment_port_mgmt>
-        get_equipment_port_mgmt_list(const std::string &obj_id = std::string());
-
-        DB_SCHEMA::equipment_port_mgmt get_equipment_port_mgmt(const std::string &equipment_port_id);
+        get_equipment_port_mgmt_list(const std::string &keyword = std::string());
     };
 
 }

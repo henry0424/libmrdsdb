@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
         vehicle_mgmt.at(0).ipaddr="192.168.99.1";
         mrdsdb->update_vehicle_mgmt(vehicle_mgmt.at(0));
     }
-    if (1) {
+    if (0) {
         auto mrdsdb = std::make_shared<MRDS::VehicleSlotMgmt>();
         mrdsdb->connect(sql_host);
 
@@ -50,16 +50,16 @@ int main(int argc, char **argv) {
         mrdsdb->connect(sql_host);
 
         auto equipment_mgmt_list = mrdsdb->get_equipment_mgmt_list();
-        auto equipment_mgmt = mrdsdb->get_equipment_mgmt(equipment_mgmt_list.at(0).equipment_id);
+        auto equipment_mgmt = mrdsdb->get_equipment_mgmt_list(equipment_mgmt_list.at(0).equipment_id);
     }
-    if (0) {
+    if (1) {
         auto mrdsdb = std::make_shared<MRDS::EquipmentPortMgmt>();
         mrdsdb->connect(sql_host);
 
         auto equipment_port_mgmt_list = mrdsdb->get_equipment_port_mgmt_list();
         auto equipment_port_mgmt_list_2 = mrdsdb->get_equipment_port_mgmt_list(
                 equipment_port_mgmt_list.at(0).equipment_id);
-        auto equipment_port_mgmt = mrdsdb->get_equipment_port_mgmt(equipment_port_mgmt_list_2.at(0).equipment_port_id);
+        auto equipment_port_mgmt = mrdsdb->get_equipment_port_mgmt_list(equipment_port_mgmt_list_2.at(0).equipment_port_id);
     }
 
     sleep(1);
