@@ -41,9 +41,9 @@ namespace Database::SQL::MRDS {
     public:
         VehicleMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::vehicle_mgmt> get_vehicle_mgmt_list();
+        std::vector<DB_SCHEMA::vehicle_mgmt> get_vehicle_mgmt_list(const std::string &keyword = std::string());
 
-        DB_SCHEMA::vehicle_mgmt get_vehicle_mgmt(const std::string &obj_id);
+        void update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_status);
     };
 
     class VehicleSlotMgmt : public VehicleMgmt {

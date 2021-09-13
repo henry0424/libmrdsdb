@@ -104,15 +104,41 @@ VehicleMgmt::VehicleMgmt(const DATABASE_NAME db) : ObjectMgmt(db) {
     LogTool::_log("VehicleMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
+std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) {
     LogTool::_log("get_vehicle_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
+    auto where = [=]() -> std::string {
+        if (keyword.empty())
+            return ";";
+        else {
+            auto queryCmd = boost::str(
+                    boost::format(
+                            "WHERE %1%.%2%.%3%.vehicle_id LIKE '%%%4%%%' "
+                            "OR %1%.%2%.%3%.carrier_class LIKE '%%%4%%%'"
+                            "OR CAST(%1%.%2%.%3%.macaddr as varchar) LIKE '%%%4%%%'"
+                            "OR CAST(%1%.%2%.%3%.ipaddr as varchar) LIKE '%%%4%%%';") %
+                    this->connector_->get_database_host().database %
+                    this->SCHEMA %
+                    this->TABLE_VEHICLE_MGMT %
+                    keyword);
+            return queryCmd;
+        }
+    };
+
     auto queryCmd = boost::str(
-            boost::format(
-                    "SELECT vehicle_id, carrier_class, slot_num, battery_threshold_full, battery_threshold_high, battery_threshold_low "
-                    "FROM %1%.%2%.%3%;") %
+            boost::format("SELECT %1%.%2%.%3%.vehicle_id, "
+                          "%1%.%2%.%3%.carrier_class, "
+                          "%1%.%2%.%3%.slot_num, "
+                          "%1%.%2%.%3%.battery_threshold_full, "
+                          "%1%.%2%.%3%.battery_threshold_high, "
+                          "%1%.%2%.%3%.battery_threshold_low, "
+                          "%1%.%2%.%3%.macaddr, "
+                          "host(%1%.%2%.%3%.ipaddr) "
+                          "FROM %1%.%2%.%3% "
+                          "%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_VEHICLE_MGMT);
+            this->TABLE_VEHICLE_MGMT %
+            where());
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -122,12 +148,16 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
     while (query->next()) {
         auto loc{0};
         DB_SCHEMA::vehicle_mgmt vehicle_mgmt_;
-        vehicle_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
-        vehicle_mgmt_.carrier_class = query->value(loc++).toString().toStdString();
-        vehicle_mgmt_.slot_num = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_full = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
+        {
+            vehicle_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
+            vehicle_mgmt_.carrier_class = query->value(loc++).toString().toStdString();
+            vehicle_mgmt_.slot_num = query->value(loc++).toInt();
+            vehicle_mgmt_.battery_threshold_full = query->value(loc++).toInt();
+            vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
+            vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
+            vehicle_mgmt_.macaddr = query->value(loc++).toString().toStdString();
+            vehicle_mgmt_.ipaddr = query->value(loc++).toString().toStdString();
+        }
         list_.push_back(vehicle_mgmt_);
         if (LOGOUT_QUERY_RESULT) {
             LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, LOGOUT_CLASS, boost::log::trivial::trace);
@@ -144,6 +174,10 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
             LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
                           LOGOUT_CLASS,
                           boost::log::trivial::trace);
+            LogTool::_log("macaddr: " + vehicle_mgmt_.macaddr, LOGOUT_CLASS,
+                          boost::log::trivial::trace);
+            LogTool::_log("ipaddr: " + vehicle_mgmt_.ipaddr, LOGOUT_CLASS,
+                          boost::log::trivial::trace);
         }
         querySize++;
     }
@@ -153,48 +187,46 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list() {
     return list_;
 }
 
-DB_SCHEMA::vehicle_mgmt VehicleMgmt::get_vehicle_mgmt(const std::string &obj_id) {
-    LogTool::_log("get_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
+void VehicleMgmt::update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_status) {
+    LogTool::_log("update_vehicle_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
-            boost::format(
-                    "SELECT vehicle_id, carrier_class, slot_num, battery_threshold_full, battery_threshold_high, battery_threshold_low "
-                    "FROM %1%.%2%.%3% "
-                    "WHERE vehicle_id=%4%;") %
+            boost::format("SELECT %1%.%2%.%3%.vehicle_id "
+                          "FROM %1%.%2%.%3% "
+                          "WHERE %1%.%2%.%3%.vehicle_id=%4%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_VEHICLE_MGMT %
-            null_(obj_id));
+            null_(vehicle_status.vehicle_id));
+
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
-    DB_SCHEMA::vehicle_mgmt vehicle_mgmt_;
     if (query->next()) {
-        auto loc{0};
-        vehicle_mgmt_.vehicle_id = query->value(loc++).toString().toStdString();
-        vehicle_mgmt_.carrier_class = query->value(loc++).toString().toStdString();
-        vehicle_mgmt_.slot_num = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_full = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_high = query->value(loc++).toInt();
-        vehicle_mgmt_.battery_threshold_low = query->value(loc++).toInt();
-        if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("vehicle_id: " + vehicle_mgmt_.vehicle_id, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("carrier_class: " + vehicle_mgmt_.carrier_class, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("slot_num: " + std::to_string(vehicle_mgmt_.slot_num), LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("battery_threshold_full: " + std::to_string(vehicle_mgmt_.battery_threshold_full),
-                          LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("battery_threshold_high: " + std::to_string(vehicle_mgmt_.battery_threshold_high),
-                          LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("battery_threshold_low: " + std::to_string(vehicle_mgmt_.battery_threshold_low),
-                          LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-        }
-    } else if ((NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
-        throw Database::Exception::NoDataException();
-
-    return vehicle_mgmt_;
+        auto queryCmd = boost::str(
+                boost::format("UPDATE %1%.%2%.%3% "
+                              "SET carrier_class=%4%, "
+                              "slot_num=%5%, "
+                              "battery_threshold_full=%6%, "
+                              "battery_threshold_high=%7%, "
+                              "battery_threshold_low=%8%, "
+                              "macaddr=%9%, "
+                              "ipaddr=%10% "
+                              "WHERE vehicle_id=%11%;") %
+                this->connector_->get_database_host().database %
+                this->SCHEMA %
+                this->TABLE_VEHICLE_MGMT %
+                null_(vehicle_status.carrier_class) %
+                vehicle_status.slot_num %
+                vehicle_status.battery_threshold_full %
+                vehicle_status.battery_threshold_high %
+                vehicle_status.battery_threshold_low %
+                null_(vehicle_status.macaddr) %
+                null_(vehicle_status.ipaddr+"/32") %
+                null_(vehicle_status.vehicle_id));
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
+        auto query = this->connector_->exec(queryCmd);
+    } else {
+        throw Exception::NoDataException();
+    }
 }
 
 //*****************************************************//

@@ -42,6 +42,8 @@ namespace Database::SQL::MRDS {
             int battery_threshold_full;
             int battery_threshold_high;
             int battery_threshold_low;
+            std::string macaddr;
+            std::string ipaddr;
         };
 
         //VehicleSlotMgmt

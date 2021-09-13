@@ -24,12 +24,18 @@ int main(int argc, char **argv) {
         auto object_mgmt_list = mrdsdb->get_object_mgmt_list();
         auto object_mgmt = mrdsdb->get_object_mgmt(object_mgmt_list.at(0).obj_id);
     }
-    if (0) {
+    if (1) {
         auto mrdsdb = std::make_shared<MRDS::VehicleMgmt>();
         mrdsdb->connect(sql_host);
 
         auto vehicle_mgmt_list = mrdsdb->get_vehicle_mgmt_list();
-        auto vehicle_mgmt = mrdsdb->get_vehicle_mgmt(vehicle_mgmt_list.at(0).vehicle_id);
+//        auto vehicle_mgmt = mrdsdb->get_vehicle_mgmt_list(vehicle_mgmt_list.at(0).vehicle_id);
+        auto vehicle_mgmt = mrdsdb->get_vehicle_mgmt_list("192.168.10.1");
+        vehicle_mgmt.at(0).battery_threshold_full = 10;
+        vehicle_mgmt.at(0).battery_threshold_high = 10;
+        vehicle_mgmt.at(0).battery_threshold_low = 10;
+        vehicle_mgmt.at(0).ipaddr="192.168.99.1";
+        mrdsdb->update_vehicle_mgmt(vehicle_mgmt.at(0));
     }
     if (0) {
         auto mrdsdb = std::make_shared<MRDS::VehicleSlotMgmt>();
@@ -46,7 +52,7 @@ int main(int argc, char **argv) {
         auto equipment_mgmt_list = mrdsdb->get_equipment_mgmt_list();
         auto equipment_mgmt = mrdsdb->get_equipment_mgmt(equipment_mgmt_list.at(0).equipment_id);
     }
-    if (1) {
+    if (0) {
         auto mrdsdb = std::make_shared<MRDS::EquipmentPortMgmt>();
         mrdsdb->connect(sql_host);
 
