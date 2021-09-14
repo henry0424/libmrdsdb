@@ -123,6 +123,19 @@ namespace Database::SQL::MRDS {
             std::string carrier_id;
             std::string comment;
         };
+
+        struct universal_event_log {
+            std::string event_ts;
+            std::string event_class;
+            std::string obj_class;
+            std::string obj_id;
+            std::string obj_port_id;
+            std::string obj_location;
+            std::string carrier_id;
+            std::string comment;
+            std::string msg_uuid;
+        };
+
     }
 }
 #endif //LIBMRDSDB_SCHEMA_HPP

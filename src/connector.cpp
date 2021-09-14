@@ -47,6 +47,7 @@ Database::SQL::Connector::Connector() {
     this->uuid_ = boost::uuids::to_string(uuid_sgen);
 
     LogTool::_log_init(LogOutput::FILE | LogOutput::SCEEN, "./Log/", "SQL_LOG_");
+    LogTool::_set_filter_level(boost::log::trivial::trace);
     LogTool::_log("Connector Init (" + this->uuid_ + ")", LOGOUT_CLASS, boost::log::trivial::info);
 
 }

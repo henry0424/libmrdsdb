@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.10)
 project(libmrdsdb)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_compile_options(-Werror=deprecated-declarations)
 
 find_package(Boost COMPONENTS system filesystem date_time thread log REQUIRED)
 add_definitions(-DBOOST_LOG_DYN_LINK)
