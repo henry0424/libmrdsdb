@@ -5,6 +5,7 @@
 #ifndef LIBMRDSDB_MRDSDB_BASE_H
 #define LIBMRDSDB_MRDSDB_BASE_H
 
+#include <optional>
 #include "connector.h"
 
 #define NO_DATA_EXCEPTION_ALL false

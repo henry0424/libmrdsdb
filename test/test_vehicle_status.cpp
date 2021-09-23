@@ -28,8 +28,9 @@ int main(int argc, char **argv) {
         auto mrdsdb = std::make_shared<MRDS::VehicleStatus>();
         mrdsdb->connect(sql_host);
         auto list_ = mrdsdb->get_vehicle_status_list("MR001");
-        list_.at(0).battery_status = "HIGH";
-        mrdsdb->update_vehicle_status(list_.at(0));
+        if (list_.has_value())
+            list_.value().at(0).battery_status = "HIGH";
+        mrdsdb->update_vehicle_status(list_.value().at(0));
     }
     sleep(1);
 }
