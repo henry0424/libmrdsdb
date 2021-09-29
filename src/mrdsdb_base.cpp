@@ -48,4 +48,39 @@ std::string MRDSDB::get_datetime(const DT_SOURCE src) {
     }
 }
 
+std::string MRDSDB::fuzzy_query_(const std::string db, const std::string schema, const std::string table,
+                                 const std::string keyword, const std::initializer_list<std::string> columns) {
+    LogTool::_log("fuzzy_query_: " + table + " <- " + keyword, LOGOUT_CLASS,
+                  boost::log::trivial::trace);
+
+    if (keyword.empty())
+        return ";";
+
+    auto dst = boost::str(boost::format("%1%.%2%.%3%.") %
+                          db %
+                          schema %
+                          table);
+
+    auto queryCmd = boost::str(boost::format());
+    auto i = 0;
+    for (auto col: columns) {
+        i == 0 ? queryCmd += "WHERE " : queryCmd += "OR ";
+        if (col.find("CAST:") == std::string::npos) {
+            queryCmd += dst + boost::str(boost::format("%1% LIKE '%%%2%%%' ") %
+                                         col %
+                                         keyword);
+        } else {
+            const std::string CAST{"CAST:"};
+            auto idx = col.find(CAST);
+            col.erase(idx, CAST.length());
+            queryCmd += "CAST(" + dst + boost::str(boost::format("%1% as varchar) LIKE '%%%2%%%' ") %
+                                                   col %
+                                                   keyword);
+        }
+        i++;
+    }
+    queryCmd += ";";
+    return queryCmd;
+}
+
 

@@ -14,23 +14,6 @@ auto ObjectPortStatus::get_object_port_status_list(
         const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::object_port_status>> {
     LogTool::_log("get_object_port_status_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.obj_id LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.obj_port_id LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.carrier_id LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_OBJECT_PORT_STATUS %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.obj_id, "
                           "%1%.%2%.%3%.obj_port_id, "
@@ -40,7 +23,8 @@ auto ObjectPortStatus::get_object_port_status_list(
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_OBJECT_PORT_STATUS %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_OBJECT_PORT_STATUS,
+                         keyword, {"obj_id", "obj_port_id", "carrier_id"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

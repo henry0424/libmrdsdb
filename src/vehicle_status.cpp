@@ -14,24 +14,6 @@ auto Database::SQL::MRDS::VehicleStatus::get_vehicle_status_list(
         const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::vehicle_status>> {
     LogTool::_log("get_vehicle_status_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.vehicle_id LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.vehicle_location LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.vehicle_status LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.battery_status LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_VEHICLE_STATUS %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.vehicle_id, "
                           "%1%.%2%.%3%.vehicle_location, "
@@ -42,7 +24,8 @@ auto Database::SQL::MRDS::VehicleStatus::get_vehicle_status_list(
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_VEHICLE_STATUS %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_VEHICLE_STATUS,
+                         keyword, {"vehicle_id", "vehicle_location", "vehicle_status", "battery_status"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

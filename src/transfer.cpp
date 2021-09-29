@@ -13,20 +13,6 @@ Transfer::Transfer(const DATABASE_NAME db) : MRDSDB(db) {
 auto
 Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>> {
     LogTool::_log("get_transfer_list", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto where = [=]() -> std::string {
-        if (cmcid.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.command_id LIKE '%%%4%%%' OR %1%.%2%.%3%.merged_command_id LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_TRANSFER_PROCESSING %
-                    cmcid);
-            return queryCmd;
-        }
-    };
 
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.receive_ts, "
@@ -48,7 +34,8 @@ Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vect
             this->SCHEMA %
             this->TABLE_TRANSFER %
             this->TABLE_TRANSFER_PROCESSING %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_TRANSFER_PROCESSING,
+                         cmcid, {"command_id", "merged_command_id"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

@@ -14,26 +14,6 @@ auto
 ObjectMgmt::get_object_mgmt_list(const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::object_mgmt>> {
     LogTool::_log("get_object_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.obj_uid LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.obj_id LIKE '%%%4%%%'"
-                            "OR CAST(%1%.%2%.%3%.enable as varchar) LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.region LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.equipment_class LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.vendor LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_OBJECT_MGMT %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.obj_uid, "
                           "%1%.%2%.%3%.obj_id, "
@@ -46,7 +26,8 @@ ObjectMgmt::get_object_mgmt_list(const std::string &keyword) -> std::optional<st
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_OBJECT_MGMT %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_OBJECT_MGMT,
+                         keyword, {"obj_uid", "obj_id", "CAST:enable", "region", "equipment_class", "vendor"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -93,24 +74,6 @@ auto
 VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::vehicle_mgmt>> {
     LogTool::_log("get_vehicle_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.vehicle_id LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.carrier_class LIKE '%%%4%%%'"
-                            "OR CAST(%1%.%2%.%3%.macaddr as varchar) LIKE '%%%4%%%'"
-                            "OR CAST(%1%.%2%.%3%.ipaddr as varchar) LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_VEHICLE_MGMT %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.vehicle_id, "
                           "%1%.%2%.%3%.carrier_class, "
@@ -125,7 +88,8 @@ VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) -> std::optional<
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_VEHICLE_MGMT %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_VEHICLE_MGMT,
+                         keyword, {"vehicle_id", "carrier_class", "CAST:macaddr", "CAST:ipaddr"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -298,21 +262,6 @@ auto EquipmentMgmt::get_equipment_mgmt_list(
         const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::equipment_mgmt>> {
     LogTool::_log("get_equipment_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.equipment_id LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_EQUIPMENT_MGMT %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.equipment_id "
                           "FROM %1%.%2%.%3% "
@@ -320,7 +269,8 @@ auto EquipmentMgmt::get_equipment_mgmt_list(
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_EQUIPMENT_MGMT %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_EQUIPMENT_MGMT,
+                         keyword, {"equipment_id"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

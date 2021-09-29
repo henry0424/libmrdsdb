@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
         auto list_ = mrdsdb->get_transfer_list();
         list_ = mrdsdb->get_transfer_list("YY");
 //        auto trasnfer = mrdsdb->get_transfer(list_.at(0).base.command_id);
+        usleep(1);
     }
     if (0) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();

@@ -17,23 +17,6 @@ auto ParkingMgmt::get_parking_mgmt_list(
         const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::parking_mgmt>> {
     LogTool::_log("get_parking_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.parking_space_id LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.parking_space_location LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.prefer_vehicle LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_PARKING_MGMT %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.parking_space_id, "
                           "%1%.%2%.%3%.parking_space_location, "
@@ -43,7 +26,8 @@ auto ParkingMgmt::get_parking_mgmt_list(
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_PARKING_MGMT %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_PARKING_MGMT,
+                         keyword, {"parking_space_id", "parking_space_location", "prefer_vehicle"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -94,25 +78,7 @@ ParkingStatus::ParkingStatus(const DATABASE_NAME db) : ParkingMgmt(db) {
 auto ParkingStatus::get_parking_status_list(
         const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::parking_status>> {
     LogTool::_log("get_parking_status_list", LOGOUT_CLASS, boost::log::trivial::trace);
-
-    auto where = [=]() -> std::string {
-        if (keyword.empty())
-            return ";";
-        else {
-            auto queryCmd = boost::str(
-                    boost::format(
-                            "WHERE %1%.%2%.%3%.parking_space_id LIKE '%%%4%%%' "
-                            "OR %1%.%2%.%3%.booking LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.booking_owner LIKE '%%%4%%%'"
-                            "OR %1%.%2%.%3%.parking_vehicle_id LIKE '%%%4%%%';") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_PARKING_STATUS %
-                    keyword);
-            return queryCmd;
-        }
-    };
-
+    
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.parking_space_id, "
                           "%1%.%2%.%3%.booking, "
@@ -123,7 +89,8 @@ auto ParkingStatus::get_parking_status_list(
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_PARKING_STATUS %
-            where());
+            fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_PARKING_STATUS,
+                         keyword, {"parking_space_id", "booking", "booking_owner", "parking_vehicle_id"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 

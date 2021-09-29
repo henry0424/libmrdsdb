@@ -6,6 +6,7 @@
 #define LIBMRDSDB_MRDSDB_BASE_H
 
 #include <optional>
+#include <initializer_list>
 #include "connector.h"
 
 #define NO_DATA_EXCEPTION_ALL false
@@ -48,6 +49,10 @@ namespace Database::SQL::MRDS {
         }
 
         std::string get_datetime(const DT_SOURCE src);
+
+        std::string
+        fuzzy_query_(const std::string db, const std::string schema, const std::string table, const std::string keyword,
+                     const std::initializer_list<std::string> columns);
     };
 
 }
