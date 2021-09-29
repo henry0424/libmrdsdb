@@ -1,0 +1,10 @@
+insert into class_reference.event_class (event_class)
+values  ('VEHICLE_NORMAL'),
+        ('VEHICLE_POWER'),
+        ('VEHICLE_ABNORMAL_FAILURE'),
+        ('VEHICLE_ABNORMAL_ASSIST'),
+        ('TRANSFER_COMMAND_NORMAL'),
+        ('TRANSFER_COMMAND_ABNORMAL_FAILURE'),
+        ('TRANSFER_COMMAND_ABNORMAL_ASSIST'),
+        ('TRANSFER_COMMAND_NORMAL_MERGED_TS'),
+        ('TRANSFER_COMMAND_NORMAL_ASSIGNED_TS');

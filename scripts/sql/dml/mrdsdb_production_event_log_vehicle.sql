@@ -1,0 +1,2 @@
+insert into production.event_log_vehicle (msg_uuid, event_ts, event_class, vehicle_id, vehicle_status, vehicle_location, carrier_id, comment)
+values  ('12345678', '2021-09-08 08:15:23.034158', 'VEHICLE_NORMAL', 'MR001', 'Hi', 'UNKNOW', '?', '++++');
