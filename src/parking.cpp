@@ -13,7 +13,8 @@ ParkingMgmt::ParkingMgmt(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("ParkingMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::parking_mgmt> ParkingMgmt::get_parking_mgmt_list(const std::string &keyword) {
+auto ParkingMgmt::get_parking_mgmt_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::parking_mgmt>> {
     LogTool::_log("get_parking_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -79,7 +80,8 @@ std::vector<DB_SCHEMA::parking_mgmt> ParkingMgmt::get_parking_mgmt_list(const st
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::parking_mgmt>>>{list_}
+                     : std::nullopt;
 }
 
 //*****************************************************//
@@ -89,7 +91,8 @@ ParkingStatus::ParkingStatus(const DATABASE_NAME db) : ParkingMgmt(db) {
     LogTool::_log("ParkingStatus *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::parking_status> ParkingStatus::get_parking_status_list(const std::string &keyword) {
+auto ParkingStatus::get_parking_status_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::parking_status>> {
     LogTool::_log("get_parking_status_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -152,7 +155,8 @@ std::vector<DB_SCHEMA::parking_status> ParkingStatus::get_parking_status_list(co
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::parking_status>>>{list_}
+                     : std::nullopt;
 }
 
 void ParkingStatus::update_parking_status(const DB_SCHEMA::parking_status parking_status) {

@@ -10,7 +10,8 @@ ObjectMgmt::ObjectMgmt(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("ObjectMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list(const std::string &keyword) {
+auto
+ObjectMgmt::get_object_mgmt_list(const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::object_mgmt>> {
     LogTool::_log("get_object_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -77,8 +78,8 @@ std::vector<DB_SCHEMA::object_mgmt> ObjectMgmt::get_object_mgmt_list(const std::
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
-
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::object_mgmt>>>{list_}
+                     : std::nullopt;
 }
 
 //*****************************************************//
@@ -88,7 +89,8 @@ VehicleMgmt::VehicleMgmt(const DATABASE_NAME db) : ObjectMgmt(db) {
     LogTool::_log("VehicleMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) {
+auto
+VehicleMgmt::get_vehicle_mgmt_list(const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::vehicle_mgmt>> {
     LogTool::_log("get_vehicle_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -169,7 +171,8 @@ std::vector<DB_SCHEMA::vehicle_mgmt> VehicleMgmt::get_vehicle_mgmt_list(const st
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::vehicle_mgmt>>>{list_}
+                     : std::nullopt;
 }
 
 void VehicleMgmt::update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_status) {
@@ -222,7 +225,8 @@ VehicleSlotMgmt::VehicleSlotMgmt(const DATABASE_NAME db) : VehicleMgmt(db) {
     LogTool::_log("VehicleSlotMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt_list(const std::string &keyword) {
+auto VehicleSlotMgmt::get_vehicle_slot_mgmt_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::vehicle_slot_mgmt>> {
     LogTool::_log("get_vehicle_slot_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -278,7 +282,8 @@ std::vector<DB_SCHEMA::vehicle_slot_mgmt> VehicleSlotMgmt::get_vehicle_slot_mgmt
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::vehicle_slot_mgmt>>>{list_}
+                     : std::nullopt;
 }
 
 //*****************************************************//
@@ -289,7 +294,8 @@ EquipmentMgmt::EquipmentMgmt(
     LogTool::_log("EquipmentMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list(const std::string &keyword) {
+auto EquipmentMgmt::get_equipment_mgmt_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::equipment_mgmt>> {
     LogTool::_log("get_equipment_mgmt_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -336,7 +342,8 @@ std::vector<DB_SCHEMA::equipment_mgmt> EquipmentMgmt::get_equipment_mgmt_list(co
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::equipment_mgmt>>>{list_}
+                     : std::nullopt;
 }
 
 //*****************************************************//
@@ -347,8 +354,8 @@ EquipmentPortMgmt::EquipmentPortMgmt(
     LogTool::_log("EquipmentPortMgmt *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::equipment_port_mgmt>
-EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &keyword) {
+auto EquipmentPortMgmt::get_equipment_port_mgmt_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::equipment_port_mgmt>> {
     LogTool::_log("equipment_port_mgmt", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -404,6 +411,7 @@ EquipmentPortMgmt::get_equipment_port_mgmt_list(const std::string &keyword) {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::equipment_port_mgmt>>>{list_}
+                     : std::nullopt;
 }
 

@@ -24,13 +24,10 @@ namespace Database::SQL::MRDS {
     public:
         VehicleStatus(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-//        std::vector<DB_SCHEMA::vehicle_status> get_vehicle_status_list(const std::string &keyword = std::string());
-
         auto get_vehicle_status_list(
                 const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::vehicle_status>>;
 
         void update_vehicle_status(const DB_SCHEMA::vehicle_status vehicle_status);
-
     };
 }
 

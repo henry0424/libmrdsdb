@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();
         mrdsdb->connect(sql_host);
         auto tp_list = mrdsdb->get_transfer_list();
-        tp_list.at(0).merged_command_id = "MC1";
-        mrdsdb->update_transfer_processing(tp_list.at(0));
+        tp_list->at(0).merged_command_id = "MC1";
+        mrdsdb->update_transfer_processing(tp_list->at(0));
     }
     if (0) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
         auto list = mrdsdb->get_transfer_list();
         std::vector<std::string> all;
         all.clear();
-        for (auto tp: list) {
+        for (auto tp: list.value()) {
             all.push_back(tp.base.command_id);
         }
         mrdsdb->set_merged_command_id(all, "YYY");

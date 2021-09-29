@@ -10,7 +10,8 @@ Transfer::Transfer(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("Transfer *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::transfer_processing> Transfer::get_transfer_list(const std::string &cmcid) {
+auto
+Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>> {
     LogTool::_log("get_transfer_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto where = [=]() -> std::string {
         if (cmcid.empty())
@@ -105,10 +106,11 @@ std::vector<DB_SCHEMA::transfer_processing> Transfer::get_transfer_list(const st
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::transfer_processing>>>{list_}
+                     : std::nullopt;
 }
 
-DB_SCHEMA::transfer_processing Transfer::get_transfer(const std::string &command_id) {
+auto Transfer::get_transfer(const std::string &command_id) -> std::optional<DB_SCHEMA::transfer_processing> {
     LogTool::_log("get_transfer", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.receive_ts "
@@ -189,7 +191,8 @@ DB_SCHEMA::transfer_processing Transfer::get_transfer(const std::string &command
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_.at(0);
+    return querySize ? std::optional<std::reference_wrapper<DB_SCHEMA::transfer_processing>>{list_.at(0)}
+                     : std::nullopt;
 }
 
 void Transfer::insert_transfer(const DB_SCHEMA::transfer_base transfer_base) {

@@ -40,7 +40,7 @@ std::map<std::string, std::string> Magic::get_magic_map() {
     return magic_map_;
 }
 
-std::string Magic::get_magic_value(const std::string &key) {
+auto Magic::get_magic_value(const std::string &key) -> std::optional<std::string> {
     LogTool::_log("get_magic_value", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT value "
@@ -67,7 +67,8 @@ std::string Magic::get_magic_value(const std::string &key) {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return value;
+    return querySize ? std::optional<std::reference_wrapper<std::string>>{value}
+                     : std::nullopt;
 }
 
 void Magic::set_magic_map(const std::map<std::string, std::string> map) {

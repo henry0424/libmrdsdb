@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
         auto mrdsdb = std::make_shared<MRDS::ObjectPortStatus>();
         mrdsdb->connect(sql_host);
         auto list_4 = mrdsdb->get_object_port_status_list("MR001_SL002");
-        list_4.at(0).carrier_id = "xxx";
-        mrdsdb->update_object_port_status(list_4.at(0));
+        list_4->at(0).carrier_id = "xxx";
+        mrdsdb->update_object_port_status(list_4->at(0));
     }
     sleep(1);
 }

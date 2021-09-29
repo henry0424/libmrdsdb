@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
         mrdsdb->set_magic_map(magic);
     }
 
-    if(1) {
+    if (1) {
         DatabaseHost sql_host;
         sql_host.host = "tachyon.itriroboticslab.org";
         sql_host.port = 5432;
@@ -44,6 +44,8 @@ int main(int argc, char **argv) {
 //            auto mrdsdb = std::make_shared<MRDS::Magic>();
 //            mrdsdb->connect(sql_host);
             auto value = mrdsdb->get_magic_value("VERSION_MRDS");
+            if (value.has_value())
+                std::cout << value.value() << std::endl;
         };
 
         std::vector<std::thread> ths;

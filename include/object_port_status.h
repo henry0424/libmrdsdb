@@ -24,11 +24,10 @@ namespace Database::SQL::MRDS {
     public:
         ObjectPortStatus(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::object_port_status>
-        get_object_port_status_list(const std::string &keyword = std::string());
+        auto get_object_port_status_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::object_port_status>>;
 
         void update_object_port_status(const DB_SCHEMA::object_port_status object_port_status);
-
     };
 }
 

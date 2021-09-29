@@ -25,7 +25,8 @@ namespace Database::SQL::MRDS {
     public:
         ObjectMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::object_mgmt> get_object_mgmt_list(const std::string &keyword = std::string());
+        auto get_object_mgmt_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::object_mgmt>>;
     };
 
     class VehicleMgmt : public ObjectMgmt {
@@ -38,7 +39,8 @@ namespace Database::SQL::MRDS {
     public:
         VehicleMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::vehicle_mgmt> get_vehicle_mgmt_list(const std::string &keyword = std::string());
+        auto get_vehicle_mgmt_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::vehicle_mgmt>>;
 
         void update_vehicle_mgmt(const DB_SCHEMA::vehicle_mgmt vehicle_status);
     };
@@ -50,8 +52,8 @@ namespace Database::SQL::MRDS {
     public:
         VehicleSlotMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::vehicle_slot_mgmt>
-        get_vehicle_slot_mgmt_list(const std::string &keyword = std::string());
+        auto get_vehicle_slot_mgmt_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::vehicle_slot_mgmt>>;
     };
 
     class EquipmentMgmt : public ObjectMgmt {
@@ -64,7 +66,8 @@ namespace Database::SQL::MRDS {
     public:
         EquipmentMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::equipment_mgmt> get_equipment_mgmt_list(const std::string &keyword = std::string());
+        auto get_equipment_mgmt_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::equipment_mgmt>>;
     };
 
     class EquipmentPortMgmt : public EquipmentMgmt {
@@ -74,8 +77,8 @@ namespace Database::SQL::MRDS {
     public:
         EquipmentPortMgmt(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::equipment_port_mgmt>
-        get_equipment_port_mgmt_list(const std::string &keyword = std::string());
+        auto get_equipment_port_mgmt_list(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::equipment_port_mgmt>>;
     };
 
 }

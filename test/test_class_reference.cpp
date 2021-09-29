@@ -23,9 +23,23 @@ int main(int argc, char **argv) {
     auto str = mrdsdb->null_(std::string(""));
     auto dt_SYSTEM = mrdsdb->get_datetime(MRDS::DT_SOURCE::SYSTEM);
     auto dt_DATABASE = mrdsdb->get_datetime(MRDS::DT_SOURCE::DATABASE);
-    { auto list = mrdsdb->get_carrier_class_list(); }
-    { auto list = mrdsdb->get_equipment_class_list(); }
-    { auto list = mrdsdb->get_event_class_list(); }
+    {
+        auto list = mrdsdb->get_carrier_class_list();
+        usleep(1);
+    }
+    {
+        auto list = mrdsdb->get_equipment_class_list();
+        if (list.has_value()) {
+            for (int i = 0; i < list->size(); ++i) {
+                std::cout << list->at(i).equipment_class << std::endl;
+            }
+        }
+        usleep(1);
+    }
+    {
+        auto list = mrdsdb->get_event_class_list();
+        usleep(1);
+    }
 
     sleep(1);
 }

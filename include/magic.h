@@ -27,14 +27,12 @@ namespace Database::SQL::MRDS {
 
         std::map<std::string, std::string> get_magic_map();
 
-        std::string get_magic_value(const std::string &key);
+        auto get_magic_value(const std::string &key) -> std::optional<std::string>;
 
         void set_magic_map(const std::map<std::string, std::string> map);
 
         void set_magic_value(const std::string &key, const std::string &value);
-
     };
-
 }
 
 #endif //LIBMRDSDB_MAGIC_H

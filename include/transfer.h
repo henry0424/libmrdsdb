@@ -36,10 +36,10 @@ namespace Database::SQL::MRDS {
     public:
         Transfer(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        std::vector<DB_SCHEMA::transfer_processing>
-        get_transfer_list(const std::string &cmcid = std::string());
+        auto get_transfer_list(
+                const std::string &cmcid = std::string()) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>>;
 
-        DB_SCHEMA::transfer_processing get_transfer(const std::string &command_id);
+        auto get_transfer(const std::string &command_id) -> std::optional<DB_SCHEMA::transfer_processing>;
 
         void insert_transfer(const DB_SCHEMA::transfer_base transfer_base);
 
@@ -64,7 +64,6 @@ namespace Database::SQL::MRDS {
 
         void set_magic(const std::string &cmcid, const std::string &magic);
     };
-
 }
 
 #endif //LIBMRDSDB_TRANSFER_H

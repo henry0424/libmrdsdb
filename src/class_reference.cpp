@@ -10,7 +10,8 @@ ClassReference::ClassReference(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("ClassReference *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
+
+auto ClassReference::get_carrier_class_list() -> std::optional<std::vector<DB_SCHEMA::carrier_class>> {
     LogTool::_log("get_carrier_class_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT carrier_class "
@@ -38,10 +39,11 @@ std::vector<DB_SCHEMA::carrier_class> ClassReference::get_carrier_class_list() {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::carrier_class>>>{list_}
+                     : std::nullopt;
 }
 
-std::vector<DB_SCHEMA::equipment_class> ClassReference::get_equipment_class_list() {
+auto ClassReference::get_equipment_class_list() -> std::optional<std::vector<DB_SCHEMA::equipment_class>> {
     LogTool::_log("get_equipment_class_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT equipment_class "
@@ -69,10 +71,11 @@ std::vector<DB_SCHEMA::equipment_class> ClassReference::get_equipment_class_list
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::equipment_class>>>{list_}
+                     : std::nullopt;
 }
 
-std::vector<DB_SCHEMA::event_class> ClassReference::get_event_class_list() {
+auto ClassReference::get_event_class_list() -> std::optional<std::vector<DB_SCHEMA::event_class>> {
     LogTool::_log("get_event_class_list", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT event_class "
@@ -100,5 +103,6 @@ std::vector<DB_SCHEMA::event_class> ClassReference::get_event_class_list() {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::event_class>>>{list_}
+                     : std::nullopt;
 }

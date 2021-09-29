@@ -10,8 +10,8 @@ ObjectPortStatus::ObjectPortStatus(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("ObjectPortStatus *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-std::vector<DB_SCHEMA::object_port_status>
-ObjectPortStatus::get_object_port_status_list(const std::string &keyword) {
+auto ObjectPortStatus::get_object_port_status_list(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::object_port_status>> {
     LogTool::_log("get_object_port_status_list", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto where = [=]() -> std::string {
@@ -66,7 +66,8 @@ ObjectPortStatus::get_object_port_status_list(const std::string &keyword) {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_;
+    return querySize ? std::optional<std::reference_wrapper<std::vector<DB_SCHEMA::object_port_status>>>{list_}
+                     : std::nullopt;
 }
 
 void ObjectPortStatus::update_object_port_status(const DB_SCHEMA::object_port_status object_port_status) {
