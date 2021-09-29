@@ -1,0 +1,7 @@
+insert into production.transfer_view (receive_ts, command_id, source_port, dest_port, priority, operator_id, carrier_id, merged_command_id, vehicle_id, transfer_state, comment, update_ts, merged_ts, assigned_ts, delivery_start_ts, delivery_stop_ts)
+values  ('2021-09-08 01:35:09.601451', '0', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C1', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null),
+        ('2021-09-08 01:33:24.084515', '3', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C1', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null),
+        ('2021-09-08 01:33:24.174375', '4', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C1', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null),
+        ('2021-09-08 01:33:23.924389', '1', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C1', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null),
+        ('2021-09-08 01:33:24.004372', '2', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C1', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null),
+        ('2021-09-08 01:33:23.846505', 'vggg', null, 'NA', 1, 'MRDS_SYSTEM', null, 'YYY', 'MR002', 'QUEUE', 'C2', '2021-09-14 10:29:11.751807', '2021-09-14 10:29:11.751807', '2021-09-08 13:16:32.781359', null, null);
