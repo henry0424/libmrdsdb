@@ -172,53 +172,50 @@ create table production.event_log_vehicle
 
 alter table production.event_log_vehicle owner to postgres;
 
-create table production.transfer
+create table if not exists production.transfer
 (
+    serial_num bigserial,
     receive_ts timestamp default CURRENT_TIMESTAMP not null,
     command_id varchar(256) not null
-        constraint transfer_pk
-            primary key,
+    constraint transfer_pk
+    primary key,
     source_port varchar(256),
     dest_port varchar(256) not null,
     priority integer default 1 not null,
-    operator_id varchar(256) default 'MRDS_SYSTEM'::character varying not null,
+    operator_id varchar(256) default 'SYSTEM'::character varying not null,
     carrier_id varchar(256)
-);
+    );
 
 alter table production.transfer owner to postgres;
 
-create table production.transfer_processing
+create unique index if not exists transfer_command_id_uindex
+    on production.transfer (command_id);
+
+create unique index if not exists transfer_receive_ts_uindex
+    on production.transfer (receive_ts);
+
+create unique index if not exists transfer_serial_num_uindex
+    on production.transfer (serial_num);
+
+create table if not exists production.transfer_processing
 (
-    command_id varchar(256) not null
-        constraint transfer_processing_transfer_command_id_fk
-            references production.transfer
-            on update cascade on delete cascade,
     merged_command_id varchar(256),
     vehicle_id varchar(256)
-        constraint transfer_processing_vehicle_mgmt_vehicle_id_fk
-            references configure.vehicle_mgmt
-            on update cascade on delete cascade,
-    transfer_state varchar(256) default 'QUEUE'::character varying not null,
-    comment varchar(1000),
-    magic varchar(1024)
-);
-
-alter table production.transfer_processing owner to postgres;
-
-create table production.transfer_timestamp
-(
-    command_id varchar(256) not null
-        constraint transfer_timestamp_transfer_command_id_fk
-            references production.transfer
-            on update cascade on delete cascade,
+    constraint transfer_processing_vehicle_mgmt_vehicle_id_fk
+    references configure.vehicle_mgmt
+    on update cascade on delete cascade,
+    transfer_state varchar(256) default 'QUEUED'::character varying not null,
+    comment varchar(1000) default ''::character varying not null,
+    magic varchar(1000),
     update_ts timestamp default CURRENT_TIMESTAMP not null,
     merged_ts timestamp,
     assigned_ts timestamp,
     delivery_start_ts timestamp,
     delivery_stop_ts timestamp
-);
+    )
+    inherits (production.transfer);
 
-alter table production.transfer_timestamp owner to postgres;
+alter table production.transfer_processing owner to postgres;
 
 create table configure.parking_mgmt
 (
@@ -332,27 +329,3 @@ alter table production.universal_event_log owner to postgres;
 
 create unique index universal_event_log_msg_uuid_uindex
     on production.universal_event_log (msg_uuid);
-
-create view production.transfer_view(receive_ts, command_id, source_port, dest_port, priority, operator_id, carrier_id, merged_command_id, vehicle_id, transfer_state, comment, update_ts, merged_ts, assigned_ts, delivery_start_ts, delivery_stop_ts) as
-SELECT transfer.receive_ts,
-       transfer.command_id,
-       transfer.source_port,
-       transfer.dest_port,
-       transfer.priority,
-       transfer.operator_id,
-       transfer.carrier_id,
-       transfer_processing.merged_command_id,
-       transfer_processing.vehicle_id,
-       transfer_processing.transfer_state,
-       transfer_processing.comment,
-       transfer_timestamp.update_ts,
-       transfer_timestamp.merged_ts,
-       transfer_timestamp.assigned_ts,
-       transfer_timestamp.delivery_start_ts,
-       transfer_timestamp.delivery_stop_ts
-FROM production.transfer
-         FULL JOIN production.transfer_processing ON transfer_processing.command_id::text = transfer.command_id::text
-         FULL JOIN production.transfer_timestamp ON transfer_timestamp.command_id::text = transfer.command_id::text;
-
-alter table production.transfer_view owner to postgres;
-
