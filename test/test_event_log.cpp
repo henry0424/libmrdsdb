@@ -18,21 +18,21 @@ int main(int argc, char **argv) {
     sql_host.database = "mrdsdb";
 
     if (0) {
-        auto mrdsdb = std::make_shared<MRDS::EventLog>();
-        mrdsdb->connect(sql_host);
-
-        MRDS::DB_SCHEMA::event_log_vehicle event_log;
-        event_log.msg_uuid = "12345678";
-        event_log.event_class = "VEHICLE_NORMAL";
-        event_log.vehicle_id = "MR001";
-        event_log.vehicle_status = "Hi";
-        event_log.vehicle_location = "UNKNOW";
-        event_log.carrier_id = "?";
-        event_log.comment = "???";
-        mrdsdb->insert_vehicle_event(event_log);
-
-        event_log.comment = "++++";
-        mrdsdb->update_vehicle_event(event_log);
+//        auto mrdsdb = std::make_shared<MRDS::EventLog>();
+//        mrdsdb->connect(sql_host);
+//
+//        MRDS::DB_SCHEMA::event_log_vehicle event_log;
+//        event_log.msg_uuid = "12345678";
+//        event_log.event_class = "VEHICLE_NORMAL";
+//        event_log.vehicle_id = "MR001";
+//        event_log.vehicle_status = "Hi";
+//        event_log.vehicle_location = "UNKNOW";
+//        event_log.carrier_id = "?";
+//        event_log.comment = "???";
+//        mrdsdb->insert_vehicle_event(event_log);
+//
+//        event_log.comment = "++++";
+//        mrdsdb->update_vehicle_event(event_log);
     }
     if (1) {
         auto mrdsdb = std::make_shared<MRDS::UniversalEventLog>();
