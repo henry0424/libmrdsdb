@@ -65,22 +65,28 @@ namespace Database::SQL::MRDS {
 
         //Transfer
         struct transfer_base {
+            int serial_num;
             std::string receive_ts;
             std::string command_id;
             std::string source_port;
             std::string dest_port;
             int priority = 0;
-            std::string operator_id = "MRDS_SYSTEM";
+            std::string operator_id = "SYSTEM";
             std::string carrier_id;
         };
 
         struct transfer_processing {
-            DB_SCHEMA::transfer_base base;
+            DB_SCHEMA::transfer_base base_;
             std::string merged_command_id;
             std::string vehicle_id;
             std::string transfer_state;
             std::string comment;
             std::string magic;
+            std::string update_ts;
+            std::string merged_ts;
+            std::string assigned_ts;
+            std::string delivery_start_ts;
+            std::string delivery_stop_ts;
         };
 
         //ObjectPortStatus

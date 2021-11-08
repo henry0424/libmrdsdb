@@ -17,65 +17,68 @@ int main(int argc, char **argv) {
     sql_host.passwd = "itriacs";
     sql_host.database = "mrdsdb";
 
+    std::vector<std::string> cid_list = {"YYDS001", "YYDS002", "YYDS003", "YYDS004"};
+    std::string mcid = "YYDS1234-MMDS1234";
+
     if (1) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();
         mrdsdb->connect(sql_host);
-        auto list_ = mrdsdb->get_transfer_list();
-        list_ = mrdsdb->get_transfer_list("YY");
-//        auto trasnfer = mrdsdb->get_transfer(list_.at(0).base.command_id);
+        for (auto cid: cid_list) {
+            mrdsdb->delete_transfer_processing(cid);
+        }
+        mrdsdb->delete_transfer_processing(mcid);
         usleep(1);
     }
-    if (0) {
+    if (1) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();
         mrdsdb->connect(sql_host);
+        for (auto cid: cid_list) {
+            Database::SQL::MRDS::DB_SCHEMA::transfer_processing tp;
+            tp.base_.command_id = cid;
+            tp.base_.dest_port = "(x0,y0)";
+            mrdsdb->insert_transfer_processing(tp);
+        }
+        usleep(1);
 
-        for (int i = 0; i < 5; ++i) {
-            MRDS::DB_SCHEMA::transfer_processing tp;
-            tp.base.command_id = std::to_string(i);
-            tp.base.dest_port = "NA";
-            mrdsdb->insert_transfer_task(tp.base);
+    }
+    if (1) {
+        auto mrdsdb = std::make_shared<MRDS::Transfer>();
+        mrdsdb->connect(sql_host);
+        mrdsdb->set_merged_command_id(cid_list, mcid);
+        usleep(1);
+    }
+    if (1) {
+        auto mrdsdb = std::make_shared<MRDS::Transfer>();
+        mrdsdb->connect(sql_host);
+        auto all_list_ = mrdsdb->get_transfer_processing();
+        auto one_list = mrdsdb->get_transfer_processing(cid_list.at(0));
+        auto merged_list = mrdsdb->get_transfer_processing(mcid);
+        usleep(1);
+    }
+    if (1) {
+        auto mrdsdb = std::make_shared<MRDS::Transfer>();
+        mrdsdb->connect(sql_host);
+        mrdsdb->set_vehicle_id(mcid, "MR001");
+        auto vehilce = mrdsdb->get_vehicle_id(mcid);
+        usleep(1);
+    }
+    if (1) {
+        auto mrdsdb = std::make_shared<MRDS::Transfer>();
+        mrdsdb->connect(sql_host);
+        mrdsdb->set_transfer_state(mcid, "DONE");
+    }
+    if (1) {
+        auto mrdsdb = std::make_shared<MRDS::Transfer>();
+        mrdsdb->connect(sql_host);
+        for (int i = 0; i < 20; ++i) {
+            mrdsdb->set_comment(mcid, std::to_string(i));
         }
     }
-    if (0) {
-        auto mrdsdb = std::make_shared<MRDS::Transfer>();
-        mrdsdb->connect(sql_host);
-        auto tp_list = mrdsdb->get_transfer_list();
-        tp_list->at(0).merged_command_id = "MC1";
-        mrdsdb->update_transfer_processing(tp_list->at(0));
-    }
-    if (0) {
-        auto mrdsdb = std::make_shared<MRDS::Transfer>();
-        mrdsdb->connect(sql_host);
-        mrdsdb->set_transfer_timestamp("vg", MRDS::Transfer::TS_ATTRIBUTE::merged_ts);
-    }
     if (1) {
         auto mrdsdb = std::make_shared<MRDS::Transfer>();
         mrdsdb->connect(sql_host);
-        auto list = mrdsdb->get_transfer_list();
-        std::vector<std::string> all;
-        all.clear();
-        for (auto tp: list.value()) {
-            all.push_back(tp.base.command_id);
-        }
-        mrdsdb->set_merged_command_id(all, "YYY");
-    }
-    if (1) {
-        auto mrdsdb = std::make_shared<MRDS::Transfer>();
-        mrdsdb->connect(sql_host);
-
-        mrdsdb->set_vehicle_id("YYY", "MR002");
-    }
-    if (1) {
-        auto mrdsdb = std::make_shared<MRDS::Transfer>();
-        mrdsdb->connect(sql_host);
-        mrdsdb->set_comment("YYY", "C1");
-        mrdsdb->set_comment("vg", "C2");
-    }
-    if (1) {
-        auto mrdsdb = std::make_shared<MRDS::Transfer>();
-        mrdsdb->connect(sql_host);
-        mrdsdb->set_magic("YYY", "M1");
-        mrdsdb->set_magic("vg", "M2");
+        mrdsdb->set_magic(mcid, "M1");
+        mrdsdb->set_magic(mcid, "M2");
     }
 
     sleep(1);

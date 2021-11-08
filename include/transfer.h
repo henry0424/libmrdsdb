@@ -9,6 +9,7 @@
 #include "schema.hpp"
 
 #define NO_DATA_EXCEPTION true
+#define DUPLICATE_DATA_EXCEPTION true
 #define LOGOUT_QUERY_RESULT true
 
 namespace Database::SQL::MRDS {
@@ -28,33 +29,32 @@ namespace Database::SQL::MRDS {
 
     protected:
         const std::string SCHEMA{"production"};
-        const std::string TABLE_TRANSFER{"transfer"};
+//        const std::string TABLE_TRANSFER{"transfer"};
         const std::string TABLE_TRANSFER_PROCESSING{"transfer_processing"};
-        const std::string TABLE_TRANSFER_TIMESTAMP{"transfer_timestamp"};
 
         /* cmcid -> Command And Merged Command.*/
     public:
         Transfer(const DATABASE_NAME db = DATABASE_NAME::POSTGRESQL);
 
-        auto get_transfer_list(
-                const std::string &cmcid = std::string()) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>>;
+        auto get_transfer_processing(
+                const std::string &keyword = std::string()) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>>;
 
-        auto get_transfer(const std::string &command_id) -> std::optional<DB_SCHEMA::transfer_processing>;
+        void insert_transfer_processing(const DB_SCHEMA::transfer_base transfer, const bool force_update = true);
 
-        void insert_transfer(const DB_SCHEMA::transfer_base transfer_base);
+        void insert_transfer_processing(const DB_SCHEMA::transfer_processing transfer, const bool force_update = true);
 
-        void update_transfer(const DB_SCHEMA::transfer_base transfer_base);
+        void update_transfer_processing(const DB_SCHEMA::transfer_processing transfer, const bool force_insert = true);
 
-        void insert_transfer_task(const DB_SCHEMA::transfer_base transfer_base);
+        void delete_transfer_processing(const std::string &cmcid);
 
-        void update_transfer_processing(const DB_SCHEMA::transfer_processing transfer_processing);
+        //----- API Sugar -------------
 
         void set_transfer_timestamp(const std::string &cmcid, const Transfer::TS_ATTRIBUTE attribute,
                                     const std::string &ts = std::string());
 
         void set_merged_command_id(const std::vector<std::string> command_id, const std::string &merged_command_id);
 
-        std::string get_vehicle_id(const std::string &cmcid);
+        auto get_vehicle_id(const std::string &cmcid) -> std::optional<std::string>;
 
         void set_vehicle_id(const std::string &cmcid, const std::string &vehicle_id);
 

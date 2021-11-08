@@ -10,32 +10,38 @@ Transfer::Transfer(const DATABASE_NAME db) : MRDSDB(db) {
     LogTool::_log("Transfer *****", LOGOUT_CLASS, boost::log::trivial::trace);
 }
 
-auto
-Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>> {
-    LogTool::_log("get_transfer_list", LOGOUT_CLASS, boost::log::trivial::trace);
+auto Transfer::get_transfer_processing(
+        const std::string &keyword) -> std::optional<std::vector<DB_SCHEMA::transfer_processing>> {
+    LogTool::_log("get_transfer_processing", LOGOUT_CLASS, boost::log::trivial::trace);
 
     auto queryCmd = boost::str(
-            boost::format("SELECT %1%.%2%.%3%.receive_ts, "
+            boost::format("SELECT %1%.%2%.%3%.serial_num, "
+                          "%1%.%2%.%3%.receive_ts, "
                           "%1%.%2%.%3%.command_id, "
                           "%1%.%2%.%3%.source_port, "
                           "%1%.%2%.%3%.dest_port, "
                           "%1%.%2%.%3%.priority, "
                           "%1%.%2%.%3%.operator_id, "
                           "%1%.%2%.%3%.carrier_id, "
-                          "%1%.%2%.%4%.merged_command_id, "
-                          "%1%.%2%.%4%.vehicle_id, "
-                          "%1%.%2%.%4%.transfer_state, "
-                          "%1%.%2%.%4%.comment, "
-                          "%1%.%2%.%4%.magic "
+                          "%1%.%2%.%3%.merged_command_id, "
+                          "%1%.%2%.%3%.vehicle_id, "
+                          "%1%.%2%.%3%.transfer_state, "
+                          "%1%.%2%.%3%.comment, "
+                          "%1%.%2%.%3%.magic, "
+                          "%1%.%2%.%3%.update_ts, "
+                          "%1%.%2%.%3%.merged_ts, "
+                          "%1%.%2%.%3%.assigned_ts, "
+                          "%1%.%2%.%3%.delivery_start_ts, "
+                          "%1%.%2%.%3%.delivery_stop_ts "
                           "FROM %1%.%2%.%3% "
-                          "FULL OUTER JOIN  %1%.%2%.%4% ON %1%.%2%.%4%.command_id = %1%.%2%.%3%.command_id "
-                          "%5%") %
+                          "%4%") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_TRANSFER %
             this->TABLE_TRANSFER_PROCESSING %
             fuzzy_query_(this->connector_->get_database_host().database, this->SCHEMA, this->TABLE_TRANSFER_PROCESSING,
-                         cmcid, {"command_id", "merged_command_id"}));
+                         keyword,
+                         {"command_id", "source_port", "dest_port", "carrier_id", "merged_command_id", "vehicle_id",
+                          "transfer_state", "magic"}));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 
@@ -44,49 +50,71 @@ Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vect
     list_.clear();
     while (query->next()) {
         auto loc{0};
-        DB_SCHEMA::transfer_base transfer_base_;
         DB_SCHEMA::transfer_processing transfer_processing_;
         {
-            transfer_base_.receive_ts = query->value(loc++).toString().toStdString();
-            transfer_base_.command_id = query->value(loc++).toString().toStdString();
-            transfer_base_.source_port = query->value(loc++).toString().toStdString();
-            transfer_base_.dest_port = query->value(loc++).toString().toStdString();
-            transfer_base_.priority = query->value(loc++).toInt();
-            transfer_base_.operator_id = query->value(loc++).toString().toStdString();
-            transfer_base_.carrier_id = query->value(loc++).toString().toStdString();
+            {
+                transfer_processing_.base_.serial_num = query->value(loc++).toInt();
+                transfer_processing_.base_.receive_ts = query->value(loc++).toString().toStdString();
+                transfer_processing_.base_.command_id = query->value(loc++).toString().toStdString();
+                transfer_processing_.base_.source_port = query->value(loc++).toString().toStdString();
+                transfer_processing_.base_.dest_port = query->value(loc++).toString().toStdString();
+                transfer_processing_.base_.priority = query->value(loc++).toInt();
+                transfer_processing_.base_.operator_id = query->value(loc++).toString().toStdString();
+                transfer_processing_.base_.carrier_id = query->value(loc++).toString().toStdString();
+            }
+            transfer_processing_.merged_command_id = query->value(loc++).toString().toStdString();
+            transfer_processing_.vehicle_id = query->value(loc++).toString().toStdString();
+            transfer_processing_.transfer_state = query->value(loc++).toString().toStdString();
+            transfer_processing_.comment = query->value(loc++).toString().toStdString();
+            transfer_processing_.magic = query->value(loc++).toString().toStdString();
+            transfer_processing_.update_ts = query->value(loc++).toString().toStdString();
+            transfer_processing_.merged_ts = query->value(loc++).toString().toStdString();
+            transfer_processing_.assigned_ts = query->value(loc++).toString().toStdString();
+            transfer_processing_.delivery_start_ts = query->value(loc++).toString().toStdString();
+            transfer_processing_.delivery_stop_ts = query->value(loc++).toString().toStdString();
         }
-        transfer_processing_.base = transfer_base_;
-        transfer_processing_.merged_command_id = query->value(loc++).toString().toStdString();
-        transfer_processing_.vehicle_id = query->value(loc++).toString().toStdString();
-        transfer_processing_.transfer_state = query->value(loc++).toString().toStdString();
-        transfer_processing_.comment = query->value(loc++).toString().toStdString();
-        transfer_processing_.magic = query->value(loc++).toString().toStdString();
         list_.push_back(transfer_processing_);
         if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("receive_ts: " + transfer_processing_.base.receive_ts, LOGOUT_CLASS,
+            LogTool::_log("serial_num: -----> " + std::to_string(transfer_processing_.base_.serial_num), LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("command_id: " + transfer_processing_.base.command_id, LOGOUT_CLASS,
+            {
+//                LogTool::_log("serial_num: " + std::to_string(transfer_processing_.base_.serial_num), LOGOUT_CLASS,
+//                              boost::log::trivial::trace);
+                LogTool::_log("\treceive_ts: " + transfer_processing_.base_.receive_ts, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\tcommand_id: " + transfer_processing_.base_.command_id, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\tsource_port: " + transfer_processing_.base_.source_port, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\tdest_port: " + transfer_processing_.base_.dest_port, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\tpriority: " + std::to_string(transfer_processing_.base_.priority), LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\toperator_id: " + transfer_processing_.base_.operator_id, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+                LogTool::_log("\tcarrier_id: " + transfer_processing_.base_.carrier_id, LOGOUT_CLASS,
+                              boost::log::trivial::trace);
+            }
+            LogTool::_log("\t\tmerged_command_id: " + transfer_processing_.merged_command_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("source_port: " + transfer_processing_.base.source_port, LOGOUT_CLASS,
+            LogTool::_log("\t\tvehicle_id: " + transfer_processing_.vehicle_id, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("dest_port: " + transfer_processing_.base.dest_port, LOGOUT_CLASS,
+            LogTool::_log("\t\ttransfer_state: " + transfer_processing_.transfer_state, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("priority: " + transfer_processing_.base.priority, LOGOUT_CLASS,
+            LogTool::_log("\t\tcomment: " + transfer_processing_.comment, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("operator_id: " + transfer_processing_.base.operator_id, LOGOUT_CLASS,
+            LogTool::_log("\t\tmagic: " + transfer_processing_.magic, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("carrier_id: " + transfer_processing_.base.carrier_id, LOGOUT_CLASS,
+            LogTool::_log("\t\tupdate_ts: " + transfer_processing_.update_ts, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("merged_command_id: " + transfer_processing_.merged_command_id, LOGOUT_CLASS,
+            LogTool::_log("\t\tmerged_ts: " + transfer_processing_.merged_ts, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("vehicle_id: " + transfer_processing_.vehicle_id, LOGOUT_CLASS,
+            LogTool::_log("\t\tassigned_ts: " + transfer_processing_.assigned_ts, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("transfer_state: " + transfer_processing_.transfer_state, LOGOUT_CLASS,
+            LogTool::_log("\t\tdelivery_start_ts: " + transfer_processing_.delivery_start_ts, LOGOUT_CLASS,
                           boost::log::trivial::trace);
-            LogTool::_log("comment: " + transfer_processing_.comment, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("magic: " + transfer_processing_.magic, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("--------------------------------------------------------------------------------",
-                          LOGOUT_CLASS, boost::log::trivial::trace);
+            LogTool::_log("\t\tdelivery_stop_ts: " + transfer_processing_.delivery_stop_ts, LOGOUT_CLASS,
+                          boost::log::trivial::trace);
         }
         querySize++;
     }
@@ -97,102 +125,22 @@ Transfer::get_transfer_list(const std::string &cmcid) -> std::optional<std::vect
                      : std::nullopt;
 }
 
-auto Transfer::get_transfer(const std::string &command_id) -> std::optional<DB_SCHEMA::transfer_processing> {
-    LogTool::_log("get_transfer", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto queryCmd = boost::str(
-            boost::format("SELECT %1%.%2%.%3%.receive_ts "
-                          "%1%.%2%.%3%.command_id "
-                          "%1%.%2%.%3%.source_port "
-                          "%1%.%2%.%3%.dest_port "
-                          "%1%.%2%.%3%.priority "
-                          "%1%.%2%.%3%.operator_id "
-                          "%1%.%2%.%3%.carrier_id "
-                          "%1%.%2%.%4%.merged_command_id "
-                          "%1%.%2%.%4%.vehicle_id "
-                          "%1%.%2%.%4%.transfer_state "
-                          "%1%.%2%.%4%.comment "
-                          "%1%.%2%.%4%.magic "
-                          "FROM %1%.%2%.%3% "
-                          "FULL OUTER JOIN  %1%.%2%.%4% ON %1%.%2%.%4%.command_id = %1%.%2%.%3%.command_id "
-                          "WHERE %1%.%2%.%3%.command_id=%5%;") %
-            this->connector_->get_database_host().database %
-            this->SCHEMA %
-            this->TABLE_TRANSFER %
-            this->TABLE_TRANSFER_PROCESSING %
-            null_(command_id));
-
-    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-    auto query = this->connector_->exec(queryCmd);
-
-    auto querySize{0};
-    std::vector<DB_SCHEMA::transfer_processing> list_;
-    list_.clear();
-    while (query->next()) {
-        auto loc{0};
-        DB_SCHEMA::transfer_base transfer_base_;
-        DB_SCHEMA::transfer_processing transfer_processing_;
-        {
-            transfer_base_.receive_ts = query->value(loc++).toString().toStdString();
-            transfer_base_.command_id = query->value(loc++).toString().toStdString();
-            transfer_base_.source_port = query->value(loc++).toString().toStdString();
-            transfer_base_.dest_port = query->value(loc++).toString().toStdString();
-            transfer_base_.priority = query->value(loc++).toInt();
-            transfer_base_.operator_id = query->value(loc++).toString().toStdString();
-            transfer_base_.carrier_id = query->value(loc++).toString().toStdString();
-        }
-        transfer_processing_.base = transfer_base_;
-        transfer_processing_.merged_command_id = query->value(loc++).toString().toStdString();
-        transfer_processing_.vehicle_id = query->value(loc++).toString().toStdString();
-        transfer_processing_.transfer_state = query->value(loc++).toString().toStdString();
-        transfer_processing_.comment = query->value(loc++).toString().toStdString();
-        transfer_processing_.magic = query->value(loc++).toString().toStdString();
-        list_.push_back(transfer_processing_);
-        if (LOGOUT_QUERY_RESULT) {
-            LogTool::_log("receive_ts: " + transfer_processing_.base.receive_ts, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("command_id: " + transfer_processing_.base.command_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("source_port: " + transfer_processing_.base.source_port, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("dest_port: " + transfer_processing_.base.dest_port, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("priority: " + transfer_processing_.base.priority, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("operator_id: " + transfer_processing_.base.operator_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("carrier_id: " + transfer_processing_.base.carrier_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("merged_command_id: " + transfer_processing_.merged_command_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("vehicle_id: " + transfer_processing_.vehicle_id, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("transfer_state: " + transfer_processing_.transfer_state, LOGOUT_CLASS,
-                          boost::log::trivial::trace);
-            LogTool::_log("comment: " + transfer_processing_.comment, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("magic: " + transfer_processing_.magic, LOGOUT_CLASS, boost::log::trivial::trace);
-            LogTool::_log("--------------------------------------------------------------------------------",
-                          LOGOUT_CLASS, boost::log::trivial::trace);
-        }
-        querySize++;
-    }
-    if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
-        throw Database::Exception::NoDataException();
-
-    return querySize ? std::optional<std::reference_wrapper<DB_SCHEMA::transfer_processing>>{list_.at(0)}
-                     : std::nullopt;
+void Transfer::insert_transfer_processing(const DB_SCHEMA::transfer_base transfer, const bool force_update) {
+    DB_SCHEMA::transfer_processing tp;
+    tp.base_ = transfer;
+    return this->insert_transfer_processing(tp);
 }
 
-void Transfer::insert_transfer(const DB_SCHEMA::transfer_base transfer_base) {
-    LogTool::_log("insert_transfer", LOGOUT_CLASS, boost::log::trivial::trace);
+void Transfer::insert_transfer_processing(const DB_SCHEMA::transfer_processing transfer, const bool force_update) {
+    LogTool::_log("insert_transfer_processing", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.command_id "
                           "FROM %1%.%2%.%3% "
-                          "WHERE %1%.%2%.%3%.command_id=%5%;") %
+                          "WHERE %1%.%2%.%3%.command_id=%4%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_TRANSFER %
             this->TABLE_TRANSFER_PROCESSING %
-            null_(transfer_base.command_id));
+            null_(transfer.base_.command_id));
 
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
@@ -200,121 +148,84 @@ void Transfer::insert_transfer(const DB_SCHEMA::transfer_base transfer_base) {
         auto queryCmd = boost::str(
                 boost::format("INSERT INTO %1%.%2%.%3% "
                               "(receive_ts, command_id, source_port, dest_port, priority, operator_id, carrier_id) "
-                              "VALUES (DEFAULT, %5%, %6%, %7%, %8%, %9%, %10%);") %
+                              "VALUES (DEFAULT, %4%, %5%, %6%, %7%, %8%, %9%);") %
                 this->connector_->get_database_host().database %
                 this->SCHEMA %
-                this->TABLE_TRANSFER %
                 this->TABLE_TRANSFER_PROCESSING %
-                null_(transfer_base.command_id) %
-                null_(transfer_base.source_port) %
-                null_(transfer_base.dest_port) %
-                transfer_base.priority %
-                default_(transfer_base.operator_id) %
-                null_(transfer_base.carrier_id));
+                null_(transfer.base_.command_id) %
+                null_(transfer.base_.source_port) %
+                null_(transfer.base_.dest_port) %
+                transfer.base_.priority %
+                default_(transfer.base_.operator_id) %
+                null_(transfer.base_.carrier_id));
         LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
         auto query = this->connector_->exec(queryCmd);
-    } else {
-        this->update_transfer(transfer_base);
+    } else if (force_update) {
+        this->update_transfer_processing(transfer);
+    } else if (DUPLICATE_DATA_EXCEPTION) {
+        throw Database::Exception::DuplicateDataException();
     }
 }
 
-void Transfer::update_transfer(const DB_SCHEMA::transfer_base transfer_base) {
-    LogTool::_log("update_transfer", LOGOUT_CLASS, boost::log::trivial::trace);
+void Transfer::update_transfer_processing(const DB_SCHEMA::transfer_processing transfer, const bool force_insert) {
+    LogTool::_log("update_transfer_processing", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("SELECT %1%.%2%.%3%.command_id "
                           "FROM %1%.%2%.%3% "
-                          "WHERE %1%.%2%.%3%.command_id=%5%;") %
+                          "WHERE %1%.%2%.%3%.command_id=%4%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_TRANSFER %
             this->TABLE_TRANSFER_PROCESSING %
-            null_(transfer_base.command_id));
+            null_(transfer.base_.command_id));
 
-    LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-    auto query = this->connector_->exec(queryCmd);
-    if (query->next()) {
-        auto queryCmd = boost::str(
-                boost::format("UPDATE %1%.%2%.%3% "
-                              "SET source_port=%6%, dest_port=%7%, priority=%8%, operator_id=%9%, carrier_id=%10% "
-                              "WHERE command_id=%5%;") %
-                this->connector_->get_database_host().database %
-                this->SCHEMA %
-                this->TABLE_TRANSFER %
-                this->TABLE_TRANSFER_PROCESSING %
-                null_(transfer_base.command_id) %
-                null_(transfer_base.source_port) %
-                null_(transfer_base.dest_port) %
-                transfer_base.priority %
-                default_(transfer_base.operator_id) %
-                null_(transfer_base.carrier_id));
-        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-        auto query = this->connector_->exec(queryCmd);
-    } else {
-        this->insert_transfer(transfer_base);
-    }
-}
-
-void Transfer::insert_transfer_task(const DB_SCHEMA::transfer_base transfer_base) {
-    LogTool::_log("insert_transfer_task", LOGOUT_CLASS, boost::log::trivial::trace);
-    auto queryCmd = boost::str(
-            boost::format("SELECT %1%.%2%.%3%.command_id "
-                          "FROM %1%.%2%.%3% "
-                          "WHERE %1%.%2%.%3%.command_id=%5%;") %
-            this->connector_->get_database_host().database %
-            this->SCHEMA %
-            this->TABLE_TRANSFER %
-            this->TABLE_TRANSFER_PROCESSING %
-            null_(transfer_base.command_id));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     if (!query->next()) {
-        this->insert_transfer(transfer_base);
-        {
-            auto querycm = boost::str(boost::format());
-            auto querycmd_table_transfer_processing = boost::str(
-                    boost::format("INSERT INTO %1%.%2%.%4% "
-                                  "(command_id, transfer_state) "
-                                  "VALUES (%5%, DEFAULT);") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_TRANSFER %
-                    this->TABLE_TRANSFER_PROCESSING %
-                    null_(transfer_base.command_id));
-
-            auto querycmd_table_transfer_timestamp = boost::str(
-                    boost::format("INSERT INTO %1%.%2%.%4% "
-                                  "(command_id) "
-                                  "VALUES (%5%);") %
-                    this->connector_->get_database_host().database %
-                    this->SCHEMA %
-                    this->TABLE_TRANSFER %
-                    this->TABLE_TRANSFER_TIMESTAMP %
-                    null_(transfer_base.command_id));
-
-            queryCmd = querycmd_table_transfer_processing + " " +
-                       querycmd_table_transfer_timestamp;
-            LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
-            auto query = this->connector_->exec(queryCmd);
-        }
+        auto queryCmd = boost::str(
+                boost::format("UPDATE %1%.%2%.%3% \n"
+                              "SET source_port=%5%, dest_port=%6%, priority=%7%, operator_id=%8%, carrier_id=%9% \n"
+                              "merged_command_id=%10%, transfer_state=%11%, comment=%12%, magic=%13% \n"
+                              "update_ts=%14%, merged_ts=%15%, assigned_ts=%16%, delivery_start_ts=%17%, delivery_stop_ts=%18% \n"
+                              "WHERE command_id=%4%;") %
+                this->connector_->get_database_host().database %
+                this->SCHEMA %
+                this->TABLE_TRANSFER_PROCESSING %
+                null_(transfer.base_.command_id) %
+                null_(transfer.base_.source_port) % //---Transfer base
+                null_(transfer.base_.dest_port) %
+                transfer.base_.priority %
+                null_(transfer.base_.operator_id) %
+                null_(transfer.base_.carrier_id) %  //---Transfer proc
+                null_(transfer.merged_command_id) %
+                null_(transfer.transfer_state) %
+                null_(transfer.comment) %
+                null_(transfer.magic) %
+                this->get_datetime(DT_SOURCE::SYSTEM) % //---Transfer datetime
+                null_(transfer.merged_ts) %
+                null_(transfer.assigned_ts) %
+                null_(transfer.delivery_start_ts) %
+                null_(transfer.delivery_stop_ts) %
+                null_(transfer.merged_ts));
+        LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
+        auto query = this->connector_->exec(queryCmd);
+    } else if (force_insert) {
+        this->insert_transfer_processing(transfer);
+    } else if (DUPLICATE_DATA_EXCEPTION) {
+        throw Database::Exception::DuplicateDataException();
     }
 }
 
-void Transfer::update_transfer_processing(const DB_SCHEMA::transfer_processing transfer_processing) {
-    LogTool::_log("update_transfer_processing", LOGOUT_CLASS, boost::log::trivial::trace);
+void Transfer::delete_transfer_processing(const std::string &cmcid) {
+    LogTool::_log("delete_transfer_processing", LOGOUT_CLASS, boost::log::trivial::trace);
+
     auto queryCmd = boost::str(
-            boost::format("UPDATE %1%.%2%.%4% "
-                          "SET merged_command_id=%5%, vehicle_id=%6%, transfer_state=%7%, comment=%8%, magic=%9% "
-                          "WHERE command_id=%10%;") %
+            boost::format("DELETE "
+                          "FROM %1%.%2%.%3% "
+                          "WHERE %1%.%2%.%3%.command_id=%4% OR %1%.%2%.%3%.merged_command_id=%4%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_TRANSFER %
             this->TABLE_TRANSFER_PROCESSING %
-            null_(transfer_processing.merged_command_id) %
-            null_(transfer_processing.vehicle_id) %
-            default_(transfer_processing.transfer_state) %
-            null_(transfer_processing.comment) %
-            null_(transfer_processing.magic) %
-            null_(transfer_processing.base.command_id));
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 }
@@ -351,17 +262,16 @@ void Transfer::set_transfer_timestamp(const std::string &cmcid, const Transfer::
 
     auto queryCmd = boost::str(
             boost::format("UPDATE %1%.%2%.%3% "
-                          "SET update_ts=%5%%6% "
+                          "SET update_ts=%4%%5% "
                           "WHERE command_id IN (SELECT command_id "
-                          "FROM %1%.%2%.%4% "
-                          "WHERE %1%.%2%.%4%.command_id LIKE '%%%7%%%' OR %1%.%2%.%4%.merged_command_id LIKE '%%%7%%%');") %
+                          "FROM %1%.%2%.%3% "
+                          "WHERE %1%.%2%.%3%.command_id=%6% OR %1%.%2%.%3%.merged_command_id=%6%);") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
-            this->TABLE_TRANSFER_TIMESTAMP %
             this->TABLE_TRANSFER_PROCESSING %
             default_(ts_) %
             ts_setter() %
-            cmcid);
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
 }
@@ -395,10 +305,10 @@ void Transfer::set_merged_command_id(const std::vector<std::string> command_id, 
     this->set_transfer_timestamp(merged_command_id, TS_ATTRIBUTE::merged_ts);
 }
 
-std::string Transfer::get_vehicle_id(const std::string &cmcid) {
+auto Transfer::get_vehicle_id(const std::string &cmcid) -> std::optional<std::string> {
     LogTool::_log("get_vehicle_id", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
-            boost::format("SELECT vehicle_id "
+            boost::format("SELECT DISTINCT(vehicle_id) "
                           "FROM %1%.%2%.%3% "
                           "WHERE transfer_processing.command_id LIKE '%%%4%%%' OR transfer_processing.merged_command_id LIKE '%%%4%%%';") %
             this->connector_->get_database_host().database %
@@ -423,7 +333,14 @@ std::string Transfer::get_vehicle_id(const std::string &cmcid) {
     if (querySize <= 0 && (NO_DATA_EXCEPTION_ALL || NO_DATA_EXCEPTION))
         throw Database::Exception::NoDataException();
 
-    return list_.at(0);
+    if (querySize > 1)
+        LogTool::_log("find vehicle id size: [" + std::to_string(querySize) + "] > 1, only return first vehicle id",
+                      LOGOUT_CLASS,
+                      boost::log::trivial::warning);
+
+
+    return querySize ? std::optional<std::reference_wrapper<std::string>>{list_.at(0)}
+                     : std::nullopt;
 }
 
 void Transfer::set_vehicle_id(const std::string &cmcid, const std::string &vehicle_id) {
@@ -431,12 +348,12 @@ void Transfer::set_vehicle_id(const std::string &cmcid, const std::string &vehic
     auto queryCmd = boost::str(
             boost::format("UPDATE %1%.%2%.%3% "
                           "SET vehicle_id=%4% "
-                          "WHERE %1%.%2%.%3%.command_id LIKE '%%%5%%%' OR %1%.%2%.%3%.merged_command_id LIKE '%%%5%%%';") %
+                          "WHERE %1%.%2%.%3%.command_id=%5% OR %1%.%2%.%3%.merged_command_id=%5%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_TRANSFER_PROCESSING %
             null_(vehicle_id) %
-            cmcid);
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     this->set_transfer_timestamp(cmcid, TS_ATTRIBUTE::assigned_ts);
@@ -447,12 +364,12 @@ void Transfer::set_transfer_state(const std::string &cmcid, const std::string &t
     auto queryCmd = boost::str(
             boost::format("UPDATE %1%.%2%.%3% "
                           "SET transfer_state=%4% "
-                          "WHERE %1%.%2%.%3%.command_id LIKE '%%%5%%%' OR %1%.%2%.%3%.merged_command_id LIKE '%%%5%%%';") %
+                          "WHERE %1%.%2%.%3%.command_id=%5% OR %1%.%2%.%3%.merged_command_id=%5%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_TRANSFER_PROCESSING %
             null_(transfer_state) %
-            cmcid);
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     this->set_transfer_timestamp(cmcid, TS_ATTRIBUTE::update_ts);
@@ -462,13 +379,13 @@ void Transfer::set_comment(const std::string &cmcid, const std::string &comment)
     LogTool::_log("set_comment", LOGOUT_CLASS, boost::log::trivial::trace);
     auto queryCmd = boost::str(
             boost::format("UPDATE %1%.%2%.%3% "
-                          "SET comment=%4% "
-                          "WHERE %1%.%2%.%3%.command_id LIKE '%%%5%%%' OR %1%.%2%.%3%.merged_command_id LIKE '%%%5%%%';") %
+                          "SET comment=comment || ',' ||%4% "
+                          "WHERE %1%.%2%.%3%.command_id=%5% OR %1%.%2%.%3%.merged_command_id=%5%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_TRANSFER_PROCESSING %
             null_(comment) %
-            cmcid);
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     this->set_transfer_timestamp(cmcid, TS_ATTRIBUTE::update_ts);
@@ -479,12 +396,12 @@ void Transfer::set_magic(const std::string &cmcid, const std::string &magic) {
     auto queryCmd = boost::str(
             boost::format("UPDATE %1%.%2%.%3% "
                           "SET magic=%4% "
-                          "WHERE %1%.%2%.%3%.command_id LIKE '%%%5%%%' OR %1%.%2%.%3%.merged_command_id LIKE '%%%5%%%';") %
+                          "WHERE %1%.%2%.%3%.command_id=%5% OR %1%.%2%.%3%.merged_command_id=%5%;") %
             this->connector_->get_database_host().database %
             this->SCHEMA %
             this->TABLE_TRANSFER_PROCESSING %
             null_(magic) %
-            cmcid);
+            null_(cmcid));
     LogTool::_log("query cmd: " + queryCmd, LOGOUT_CLASS, boost::log::trivial::trace);
     auto query = this->connector_->exec(queryCmd);
     this->set_transfer_timestamp(cmcid, TS_ATTRIBUTE::update_ts);
